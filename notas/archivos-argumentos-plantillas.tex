@@ -1,0 +1,122 @@
+\chapter{Referencias, archivos, argumentos de la línea de comandos y plantillas
+de función}
+
+En este capítulo, veremos algunas técnicas de C++ básico que nos ayudan a
+producir datos bien estructurados.
+
+\section{Calcular promedios en una función}
+Supongamos que nuestro programa produce unos datos, y quisiéramos calcular el
+promedio y otras propiedades estadísticas de estos datos. Tenemos tres
+posibilidades:
+\begin{enumerate}
+\item Actualizar una suma corrida cada vez que generamos un dato, y calcular el
+promedio al final;
+\item Guardar los datos en un arreglo mientras el programa corre, y calcular
+las propiedades al final;
+\item Guardar los datos en un archivo en el disco, y procesarlos posteriormente.
+\end{enumerate}
+
+La primera opción tiene la ventaja que está más sencillo, pero se puede volver
+complicado calcular muchas cantidades, y hay que modificar el código adentro
+del programa para hacerlo. La tercera opción es tal vez la mejor, ya que los
+datos ``crudos'' están disponibles para calcular nuevas cantidades
+posteriormente.
+
+Por el momento, consideremos la opción dos. Mientras generamos los datos, los
+vamos guardando en un arreglo, que en C++ se podría implementar con un
+\inl{vector}:
+\begin{lstlisting}
+vector<int> pos;
+pos.push_back(3);
+\end{lstlisting}
+Podemos utilizar el método \inl{push_back()} del \inl{vector} para agregar más
+datos en cualquier momento.
+
+\ejercicio
+Los vectores tienen un método \inl{capacity()} que reporta la cantidad de
+espacio que está reservado actualmente para que crezca el vector. Investiga
+cómo cambia esta capacidad al agregar cada vez más elementos con
+\inl{push_back()}.
+
+Al final del programa querramos calcular, por ejemplo, un promedio.
+Para poder reutilizar este código, quisiéramos ponerlo en una función:
+\begin{lstlisting}
+double promedio(vector<int> v) {
+  int suma = 0;
+  for (int i=0; i < v.size(); i++) {
+    suma += v[i];
+  }
+  return suma / double(v.size());
+}
+\end{lstlisting}
+Nótese que pasamos un vector completo como argumento a la función.
+
+\section{Referencias}
+Para entender mejor el efecto de pasar argumentos a funciones, consideremos un
+caso muy sencillo:
+\begin{lstlisting}
+void f(int a) {
+  cout << "En f(): a = " << a << endl;
+  a = 3;
+  cout << "En f(): a = " << a << endl;
+}
+
+int main() {
+  int b = 7;
+  cout << "En main(): b = " << b << endl;
+  f(b);
+  cout << "En main(): b = " << b << endl;
+}
+\end{lstlisting}
+>Cuál será la salida de este programa? Podríamos esperar que el valor de
+\inl{b} cambiaría, ya que es el argumento de la función \inl{f()}, donde se
+modifica. Sin embargo, eso no es cierto --el valor de \inl{b} no cambia.
+
+La razón por esto es que la variable \inl{a} se crea como una variable nueva
+que existe nada más adentro de la función \inl{f()} --es decir, es una variable
+\defn{local}. Su valor es una \emph{copia} del valor de \inl{b}, y por lo 
+tanto, cuando se le asigna un nuevo valor, no afecta el valor de \inl{b}.
+
+Sin embargo, hay situaciones en las que \emph{sí} queremos que las funciones
+modifiquen a las variables externas de ellas. Eso se logra utilizando una
+\defn{referencia}:
+\begin{lstlisting}
+void f(int& a) {
+  a = 3;
+}
+\end{lstlisting}
+Una referencia, declarada usando un ámpersand \inl{&} después del tipo de
+la variable, declara un ``alias'', u otro nombre, de una misma variable. En
+este caso, \inl{a} se vuelve otro nombre para \inl{b} --se puede considerar
+como un \defn{puntero} a \inl{b}-- y, por lo tanto, cuando se modifica \inl{a}
+es ahora equivalente de modificar \inl{b}.
+
+Regresemos al caso de la función \inl{promedio} de la sección anterior.  Lo que
+acabamos de ver es que cuando declaramos la función usando
+\begin{lstlisting}
+double promedio(vector<int> v) {
+}
+\end{lstlisting}
+el vector \inl{v} será una \emph{copia} del vector original. Se copiarán todos
+los datos a un nuevo \inl{vector}, solamente para calcular su promedio. Esto se
+puede evitar al utilizar una referencia, así que la declaración se vuelve
+\begin{lstlisting}
+double promedio(vector<int>& v) {
+}
+\end{lstlisting}
+Ahora \inl{v} es simplemente otro nombre para el mismo objeto, y ya no se copia
+ninguna información.
+
+Sin embargo, esto permitiría modificar a los datos originales, que tampoco
+queremos. Para evitar eso, ponemos la declaración siguiente:
+\begin{lstlisting}
+double promedio(const vector<int>& v) {
+}
+\end{lstlisting}
+La palabra \inl{const} (``constante'') indica al compilador que esta función
+\emph{no} está permitida modificar el contenido del objeto.
+
+
+
+
+

@@ -1,0 +1,464 @@
+\chapter{Números aleatorios, funciones, y caminatas aleatorias}
+
+La meta de este capítulo es la de llegar a hacer una \defn{simulación} de uno de
+los sistemas físicos más sencillos: una \defn{caminata aleatoria}.
+
+Por una simulación, nos referimos a un modelo computacional que reproduce las
+características principales de un sistema físico adentro de la computadora.
+
+\section{Caminatas aleatorias}
+
+
+Empecemos con el estudio de las caminatas aleatorias.
+En este tipo de modelo, una partícula brinca en distintas direcciones al azar.
+% Podemos pensar en un borracho que no puede controlar sus movimientos. Pero
+Este modelo es una aproximación, más o menos buena, del comportamiento de muchos
+sistemas físicos, por ejemplo el movimiento de una partícula grande
+``Browniana'' en agua. 
+El comportamiento ``aleatorio'' provee de los miles de colisiones que sufre la
+partícula con las moléculas a su alrededor, cuyo efecto total modelamos como 
+impulsos aleatorios.
+Además, es una primera aproximación a una descripción del
+tipo de movimiento que ejecuta un organismo vivo, por ejemplo una célula, una
+hormiga, o un animal, viajando en su entorno.
+
+Para simplicidad, consideremos inicialmente el caso donde el caminante brinca
+en momentos de tiempo \defn{discretos} $n=1, 2, \ldots$, correspondiendo a
+momentos de tiempo $\delta t$, $2 \delta t$, etc., donde $\delta t$ es un
+incremento de tiempo pequeño.
+% 
+% los modelos que
+% estudiamos serán \emph{discretizados} sobre una red.
+% Por el momento usaremos una red regular en una o dos dimensiones; después
+% extenderemos nuestro estudio a redes más complejas.
+
+\section{Caminata aleatoria discreta en 1 dimensión}
+Empecemos con una caminata aleatoria  que vive en una 
+una \defn{red} en 1 dimensión, y una partícula --un
+caminante-- que empieza en el orígen $0$ al tiempo $n=0$.
+En cada paso el caminante ejecuta una de tres acciones con distintas
+\emph{probabilidades}
+\begin{itemize}
+ \item  brinca a la derecha con probabilidad $p$;
+\item brinca a la izquierda con probabilidad $q$; ó
+\item se queda en el mismo lugar con probabilidad $r := 1-(p+q)$.
+\end{itemize}
+En el caso más sencillo, tiene que brincar, con $r=0$. El caso más clásico es
+con probabilidades iguales de brincar en cualquier de las dos direcciones, es
+decir, $p=q=\textstyle \frac{1}{2}$.
+
+Este problema es uno de los problemas más clásicos en la física estadística, y
+muchos de sus propiedades se conocen de manera analítica.
+
+\section{Números aleatorios}
+
+Para abarcar la \defn{simulación} de una caminata aleatoria, necesitamos poder
+hacer elecciones entre distintas opciones con cierta \defn{probabilidad}.
+Para hacerlo, utilizaremos \defn{números aleatorios}.
+
+>Cómo se pueden generar números aleatorios en una computadora? La respuesta es
+que <no se puede!, ya que una computadora puede llevar a cabo solamente
+operaciones deterministas. Sin embargo, podemos generar secuencias de números
+que se comportan ``como si fueran'' aleatorios; éstos se llaman números
+\defn{pseudo-aleatorios}. Para hacerlo, ocuparemos secuencias generadas por
+iteraciones deterministas, con ciertas propiedades escogidas para dar la
+apariencia de aleatoriedad.
+
+\section{Generación de número aleatorios}
+
+Para el uso en una simulación seria, se emplearía una librería, por ejemplo el
+Gnu Scientific Library. (En
+particular, hoy en día se usa mucho el algoritmo llamado Mersenne Twister.)
+Sin embargo, para un uso básico, es útil saber cómo se pueden generar los
+números
+aleatorios en una computadora.
+
+La manera más frecuente de generar números pseudo-aleatorios es a partir de una
+iteración $x_{n+1} = f(x_n)$, donde $x_n$ es \defn{entero}. Dependiendo de la
+función $f$ se pueden obtener resultados que parezcan aleatorios.
+
+Una de las secuencias que se solía usar era $f(x_n) = ax_n + b\ (\mathrm{mod\ }
+m)$. Si se escogen bien la $a$, $b$ y $m$,  entonces esta iteración sencilla
+puede dar buenos resultados. Este método recae en el hecho de que los enteros
+en C++ son de un tamaño de 32 bits, entonces cualquier operación que da un
+resultado mayor que este tamaño se truncará.
+
+Un ejemplo está dado por
+\begin{equation}
+ a = 1664525; \quad b=1013904223; \quad m=2^{32}.
+\end{equation}
+El valor de $m$ es uno más que el máximo valor que se puede guardar en un
+entero de 32 bits, por lo cual se puede ejecutar de manera automática el
+módulo, al declarar las variables como 
+\begin{lstlisting}
+unsigned int x;
+\end{lstlisting}
+es decir, enteros que no pueden ser negativos.
+
+\ejercicio
+Implementa este método para generar números aleatorios enteros.
+>Cómo se puede convertir en un método para generar números aleatorios en el
+intervalo $[0,1]$? >En el intervalo $[0,1)$?
+
+\ejercicio
+Dibujar pares de estos números aleatorios en $[0,1]$ en un plano para verificar
+que no hay ninguna correlación que se pueda detectar a ojo.
+
+
+
+
+
+
+ Hoy en día se usa el método de ``Mersenne Twister''
+(algo así como el torcedor de Mersenne) que usa los números primos de Mersenne,
+es decir, del tipo $2^{2^{n-1}}$. La secuencia que se genera es periódica, pero
+el periodo es de $2^{19937}-1 \simeq 10^{600}$ números. 
+
+Para iniciar la
+secuencia de números aleatorios, se utiliza una \defn{semilla} (``seed''), que
+es simplemente el 
+valor inicial con el cual se empieza la iteración. Al utilizar otra semilla, se
+generará otra secuencia de números pseudo-aleatorios.
+
+
+
+
+% De hecho, una maquina determinista \emph{no} puede generar números realmente
+% \emph{aleatorios}, sino nada más \emph{pseudo}-aleatorios. Éstos se ven
+% ``como si fueran'' realmente aleatorios, es decir, tienen propiedades
+% estadísticas que se aproximan a las de una serie de números aleatorios
+% verdadero. Estos números pseudo-aleatorios se generan a partir de una
+% iteración
+% \emph{determinista}, pero que da como resultado una secuencia que parece ser
+% aleatorio.
+
+
+\section{Funciones}
+
+Las \emph{funciones} se pueden considerar como subprogramas, o subrutinas,  que
+ejecutan una tarea reducida. Cada función debería de corresponder a una tarea
+dada.
+
+Las funciones se \emph{declaran} como es el caso de la función \inl!main!. El
+caso más sencillo es:
+\begin{lstlisting}
+void saludo() {
+  cout << "Bienvenido al programa." << endl;
+}
+\end{lstlisting}
+Aquí:
+\begin{itemize}
+\item \inl{f} es el nombre de la función
+\item \inl{()} es la lista de parámetros de la función
+\item el bloque \inl!{! $\cdots$ \inl!}! es el cuerpo de la función --las
+operaciones que la función llevará a cabo
+\item \inl!void! quiere decir que la función no regresa ninguna información.
+\end{itemize}
+
+El declarar una función \emph{no implica} que la función se utilizará. 
+Para utilizar una función, hay que \defn{llamarla} desde otro lado del programa.
+Para hacerlo, se pone el nombre de la función, seguido por paréntesis que
+contienen los argumentos que se enviarán a la función, por ejemplo:
+\begin{lstlisting}
+int cuad(int a) {
+  return a * a;
+}
+
+int main() {
+  int a = 17;
+  cout << "El cuadrado de " << a << " es " << cuad(a);
+}
+\end{lstlisting}
+Esta función acepta un \defn{argumento} \inl{a}, cuyo tipo debemos especificar.
+También regresa un entero.
+
+Puede haber mas que un \inl{return} en una función.
+
+Una función debe ser corta,
+tener un nombre que representa lo que hace, y ser clara.
+Una vez que se ha comprobado que una función hace lo que debería de
+hacer, se puede olvidar del contenido de la función y reutilizar la misma
+dentro del mismo u otros programas.  Si una función crece demasiado, 
+es necesario dividirlo en distintas funciones, cada una de las
+cuales hace una tarea propia.  Estas sub-funciones se pueden llamar desde la
+función principal.
+
+De la misma manera, la función \inl{main} \emph{no} debería contener todo el
+programa, sino llamar a distintas funciones con nombres representativos,
+quienes llevan al cabo las distintas tareas requeridas.
+
+\ejercicio 
+Calcular e imprimir las raíces cuadradas y las raíces cuárticas de los enteros
+de $1$ a $100$ utilizando el algoritmo Babilónico.
+
+
+\section{Rutinas para números aleatorios}
+
+En C++, ya existe una función \inl{rand()} para generar números aleatorios
+\emph{enteros}, que es suficiente para un uso ``casual''.
+% \footnote{No es adecuado para un uso
+% más serio, para lo cual se puede emplear, por ejemplo, el algoritmo llamado 
+% \defn{Mersenne Twister}.}:
+Esta función está declarada en la librería \inl{cstdlib}.
+Esta función
+regresa un número aleatorio entero entre $0$ y una constante muy 
+grande \inl{RAND_MAX},  que normalmente está dado por de $2^{31} - 1 \simeq 2
+\times 10^9$.
+(También viene definido en \inl{cstdlib}.)
+
+Para generar un número real en el intervalo $[0,1)$, uno pensaría en
+\begin{lstlisting}
+double drand() { 
+  return rand() / RAND_MAX;
+}
+\end{lstlisting}
+Sin embargo, aquí estamos dividiendo dos números enteros, lo cual da $0$ (o tal
+vez $1$ de vez en cuando), ya que operaciones entre enteros siempre regresan la
+parte entera de la respuesta. Por lo tanto, es necesario convertir uno de los
+enteros a precision doble:
+\begin{lstlisting}
+double drand() {
+	return double(rand()) / RAND_MAX;
+}
+\end{lstlisting}
+Esto está perfecto para números en el intervalo $[0,1]$. Para el intervalo
+$[0,1)$ (es decir, que no incluye $1$), 
+hay que usar
+\begin{lstlisting}
+double drand() {
+	return double(rand()) / (RAND_MAX+1.);
+}
+\end{lstlisting}
+
+\ejercicio
+\begin{itemize}
+\item >Cómo se pueden generar números reales en el intervalo $[a,b)$?
+\item >Qué tal números enteros en $[i,j)$?
+\item >Cómo se pueden generar $-1$ ó $1$ con probabilidad $\textfrac{1}{2}$
+cada uno?
+\item >Cómo se puede generar $0$, $1$, $2$ ó $3$ con probabilidades $0.5$,
+$0.25$, $0.125$ y $0.125$, respectivamente?
+\end{itemize}
+
+\section{Archivos de cabecera}
+
+Ya que tenemos el código para generar distintos tipos de números aleatorios, lo
+podemos colocar en un \defn{archivo de cabecera}, llamado, por ejemplo,
+\inl{alea.h}.  En cada programa que utiliza este mismo código,  incluimos
+la línea
+\begin{lstlisting}
+#include "alea.h"
+\end{lstlisting}
+y entonces las funciones ahí definidas estarán disponibles.
+En general, los archivos de cabecera proveen código útil que se puede incluir
+en distintos programas para reutilizarse, sin tener que reescribirse cada vez.
+
+
+
+Nótese que en C++, se puede ocupar el mismo nombre para dos funciones
+distintas, siempre y cuando sus argumentos sean distintos.
+
+
+\ejercicio
+¿Cómo se podría generar ``A'' con $\frac{1}{3}$ ó ``B'' con
+$\frac{2}{3}$?
+
+\ejercicio
+Generar ``A'' con probabilidad $\frac{1}{3}$ y  ``B'' con
+probabilidad $\frac{2}{3}$ un total de $N$ veces. Contar el número de As y Bs
+que se  obtienen realmente.
+
+
+\section{Simulación de una caminata aleatoria en una dimensión}
+
+Con las herramientas que hemos desarrollado hasta la fecha, no está difícil
+implementar la simulación de una caminata aleatoria en una red uni-dimensional.
+
+La única pieza de información que el caminante requiere es su posición, que
+será un número entero.  En cada paso, se escoge si brincará a la izquierda o a
+la derecha, o si se quedará en el mismo lugar, y se actualiza su posición de
+acuerdo con esta elección.
+
+\ejercicio 
+Implementa una caminata aleatoria discreta en una dimensión en un programa
+llamado \inl{caminata}.
+Dibujar su posición contra el tiempo.
+
+\section{Correr varias veces una simulación}
+Si tenemos una simulación de este tipo, >cómo podríamos correrlo varias veces y
+dibujar la salida de todas las corridas? 
+
+Una manera sería implementar en el mismo programa otro bucle, donde se
+especifica el número de veces que correrse. Pero otra manera, que puede ser más
+flexible, es implementar el bucle desde la línea de comandos. Utilizaremos
+\inl{bash} para los ejemplos --la sintaxis cambia para distintos tipos de
+shell. (Para entrar en una sesión de \inl{bash}, si se encuentra utilizando
+otro shell, simplemente se pone el comando \inl{bash}.)
+
+Muchos de los comandos que teclean en la línea de comandos son programas que 
+\inl{bash} corre. Uno de ellos en Linux es \inl{seq}, que genera
+secuencias de números\footnote{En BSD (utilizado en MacOS), el equivalente es
+\inl{jot 10 1}.}:
+\begin{lstlisting}
+$ seq 1 10
+\end{lstlisting}
+\inl{bash} provee una manera de captar la salida de este comando con la
+sintaxis
+\begin{lstlisting}
+$ echo $(seq 1 10)
+\end{lstlisting}
+donde el comando \inl{echo} simplemente imprime su argumento y
+\inl{$(} $\cdots$ \inl{)} capta la salida del comando.
+
+Ahora podemos \defn{iterar} sobre una lista de palabras con un \inl{for}:
+\begin{lstlisting}
+$ for i in $(seq 1 10); do echo "Hola"; done
+\end{lstlisting}
+El valor de una variable se obtiene a través de \inl!$!:
+\begin{lstlisting}
+$ for i in $(seq 1 10); do echo $i; done
+\end{lstlisting}
+
+\ejercicio
+Compara la salida de la siguientes dos comandos:
+\begin{lstlisting}
+$ for i in $(seq 1 10); do echo $i; done
+$ for i in seq 1 10; do echo $i; done
+\end{lstlisting}
+
+\ejercicio
+Corre el programa \inl{caminata} 100 veces y captar su salida a un archivo.
+Grafica la posición contra el tiempo para cara corrida.
+Para eso, es útil saber que \inl{gnuplot} trata bloques de líneas de datos en un
+archivo como corridas distintas si están separadas por dos líneas en blanco.
+En la versión de \inl{gnuplot} 4.3 y mayores\footnote{El comando \inl{gnuplot
+--version} indica qué versión es.}, se puede iterar en estos distintos bloques
+(llamados \defn{índices}) del archivo con la siguiente notación:
+\begin{lstlisting}
+plot for [j=1:100] "caminata.dat" index j	# abreviacion de index: i
+\end{lstlisting}
+
+
+% 
+% 
+% \section{Colecciones de datos: arreglos}
+% 
+% >Cómo podríamos simular una caminata aleatoria en una red cuadrada en dos
+% dimensiones? En cada paso, el caminante debería escoger una dirección al azar,
+% por ejemplo con igual probabilidad.
+% 
+% La posición en $d$ dimensiones espaciales está representada por $d$
+% coordenadas.
+% La manera más sencilla de representar este vector es simplemente definiendo
+% $d$ 
+% variables enteras por separado, por ejemplo, \inl{x} y \inl{y} en dos
+% dimensiones. Sin embargo, esta manera no refleja de manera muy fiel la
+% estructura matemática; tampoco será muy fácil de extender a otras dimensiones.
+% 
+% Por lo tanto, es necesario buscar una \defn{estructura de datos} capaz de
+% representar a este conjunto de coordenadas. Matemáticamente, podemos pensar en
+% un \defn{vector} con $d$ entradas; buscamos entonces el análogo.
+% 
+% El análago es un \defn{arreglo} --una estructura que puede contener $d$ datos
+% del mismo tipo. En C++, la manera más básica de declarar un arreglo de $d$
+% entradas es
+% \begin{lstlisting}
+% int posicion[2];
+% \end{lstlisting}
+% Aquí, \inl{posicion} se declara como un arreglo de 2 enteros, los cuales se
+% pueden accesar con
+% \begin{lstlisting}
+% posicion[0] = 3;
+% posicion[1] = -17;
+% cout << "El vector es (" << posicion[0] << ", " << posicion[1] << ")\n"
+% \end{lstlisting}
+% Nótese que la numeración empieza en \defn{cero} y termina en $d-1$ en C++.
+% 
+% \section{Contenedores tipo \inl!vector!}
+% 
+% Sin embargo, esta manera de declarar  arreglos resulta ser poco flexible.
+% Otra manera más flexible, disponible solamente en C++, es utilizando
+% la librería \inl{vector}, que forma parte de la biblioteca estándar de C++. 
+% \inl{vector} es un \defn{contenedor}, que es cualquier estructura de datos que
+% contiene distintos datos del mismo tipo. Se declara como sigue:
+% \begin{lstlisting}
+% vector<int> posicion(2);
+% \end{lstlisting}
+% lo cual dice que posicion es un \inl{vector} que contiene enteros, y tiene
+% tamaño inicial 2 (el número de elementos que puede contener).
+% La sintaxis para accesar los elementos de un vector es igual a la para accesar
+% un arreglo: \inl{posicion[0]}, etc.  
+% 
+% La ventaja de un \inl{vector} es que su tamaño puede cambiar mientras el
+% programa corre. Por ejemplo, para agregar un elemento al final del
+% \inl{vector}, se utiliza la función \inl{push_back}:
+% \begin{lstlisting}
+% posicion.push_back(5);
+% cout << "Posicion tiene " << posicion.size() << " elementos\n";
+% \end{lstlisting}
+% 
+% Aquí, \inl{push_back()} y \inl{size()} (que regresa el número de elementos
+% que están actualmente adentro del \inl{vector} son funciones. El punto entre
+% \inl{posicion} y los nombres de estas funciones indica que son funciones que
+% ``le pertenecen'' al \defn{objeto} \inl{posicion}. Este mecanismo permite que
+% distintos tipos de objetos tengan funciones con el mismo nombre.
+% 
+% 
+% Nótese que el nombre \inl{vector} es un poco confuso del punto de vista
+% matemática, ya que actúa simplemente como un contenedor de datos --no hay
+% ninguna operación matemática definida para este tipo de \inl{vector}.
+% Visto sus capacidad de cambiar de tamaño, podemos pensar en \inl{vector} más
+% como una lista lineal de objetos de un tipo dado que un vector matemático.
+% 
+% \section{Caminatas aleatorias en dos dimensiones}
+% Ahora podemos regresar a implementar una caminata aleatoria en dos
+% dimensiones.
+% 
+% \ejercicio\\
+% (i) Implementa una caminata aleatoria en 2 dimensiones, con una posición que
+% es
+% un vector de dos coordenadas. En cada paso, se elige una dimensión al azar, y
+% se
+% elige al azar si incrementar o decrementar la coordenada en esta dimensión.
+% 
+% (ii) Traza la trayectoria de una caminata aleatoria en 2 dimensiones.
+% Utiliza el comando \\
+% \inl{set size ratio -1} para que los ejes se vean en la
+% proporción correcta (1:1).
+% 
+% (iii) Traza la trayectoria de 100 caminatas aleatorias.
+% 
+% (iv) Dibuja las posiciones \emph{finales} de 10000 caminatas aleatorias
+% después
+% de distintos números de pasos.
+% 
+% \ejercicio
+% Repite el ejercicio anterior para una caminata aleatoria en 3 dimensiones,
+% utilizando el comando \inl{splot} de \inl{gnuplot} para dibujar en 3
+% dimensiones. (En las nuevas versiones de \inl{gnuplot}, se puede utilizar
+% \inl{set view equal xyz} para obtener un efecto parecido a 
+% \inl{set size ratio -1} en dos dimensiones.)
+
+\section{Cambiar los números aleatorios}
+
+Si volvemos a correr un programa que utiliza los números aleatorios que provee
+\inl{drand()}, encontraremos que los mismos números salen en cada corrida del
+programa.  Eso puede ser útil --por ejemplo, para identificar dónde ocurre un
+error.
+
+Sin embargo, normalmente querramos generar distintos números aleatorios en cada
+corrida. Para hacerlo, basta con incluir la línea
+\begin{lstlisting}
+#include <ctime>
+
+int main() {
+  srand(time(0));
+}
+\end{lstlisting}
+La función \inl{srand()} inicializa la \defn{semilla} de los números aleatorios
+con su argumento. En este caso, utilizamos el tiempo del sistema, dado por
+\inl{time(0)}, para escoger una semilla distinta cada vez\footnote{Esta
+función regresa el tiempo en segundos desde el 1ero de enero de 1970. Por lo
+tanto, dará el mismo resultado si se corre un mismo programa varias veces
+antes de que se haya actualizado este número de segundos.}.
+

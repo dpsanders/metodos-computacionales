@@ -1,0 +1,169 @@
+\documentclass[10pt,twoside,openany, letterpaper]{book}
+
+% \usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[letterpaper, margin=1.2in]{geometry}
+\usepackage{bm}
+\usepackage{hyperref}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+
+\usepackage{pdfsync}
+
+\usepackage{manfnt}
+
+% \renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{url}
+
+\usepackage{fancyhdr}
+\newcommand{\headerfont}[1]{{\small {#1}} }
+\pagestyle{fancy}
+
+\renewcommand{\chaptermark}[1] {%
+  \markboth{\headerfont{\thechapter. %
+  \ #1}}{}}
+
+   %\markboth{\headerfont{\thechapter. %
+
+\renewcommand{\sectionmark}[1] {%
+  \markright{\headerfont{\thesection. %
+  \ \ #1}}{}}
+
+\fancyhead[LO]{\small \rightmark}
+\fancyhead[RE]{\small \leftmark}
+\fancyhead[RO]{\small \thepage}
+\fancyhead[LE]{\small \thepage}
+
+\fancyfoot{}
+
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+
+\usepackage[bf, small, compact]{titlesec}
+\titlelabel{\thetitle.\quad}
+
+\newcommand{\ttt}[1]{\texttt{#1}}
+
+% Listings:
+\usepackage{courier}
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{listings}
+
+\lstset{
+	language=[Visual]C++,
+	keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1},
+	identifierstyle=\ttfamily,
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\ttfamily\color[rgb]{0.627,0.126,0.941},
+	showstringspaces=false,
+	basicstyle=\small\ttfamily,
+	numberstyle=\footnotesize,
+	numbers=none,  % left
+	stepnumber=1,
+	numbersep=10pt,
+	tabsize=2,
+	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	breakatwhitespace=false,
+	aboveskip={1.\baselineskip},
+  columns=fixed,
+  upquote=true,
+  extendedchars=true,
+ frame=single,  %frame =none
+% backgroundcolor=\color{lbcolor},
+}
+
+
+\newcommand{\source}[2]{\lstinputlisting[caption=#2]{progs/#1}}
+
+%\makeatletter
+
+\newcommand{\textfrac}[2]{\textstyle \frac{#1}{#2}}
+
+\renewcommand{\chaptername}{Capítulo}
+
+\begin{document}
+\newcommand{\captionfonts}{\small}
+
+\newcommand{\defn}[1]{\emph{#1}}
+
+
+\makeatletter  % Allow the use of @ in command names
+\long\def\@makecaption#1#2{%
+  \begin{quotation}
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{{\captionfonts \noindent \textbf{#1}: #2}}%
+  \ifdim \wd\@tempboxa >\hsize
+    {\captionfonts \noindent \textbf{#1}: #2\par}
+  \else
+    \hbox to\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip \end{quotation}}
+\makeatother   % Cancel the effect of \makeatletter
+
+\renewcommand{\figurename}{Fig.}
+
+\bibliographystyle{alpha}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% title page
+\title{\textbf{Métodos computacionales para la física estadística}}
+\author{\Large Dr.~David P.~Sanders\\Facultad de Ciencias, UNAM\\
+\url{dps@fciencias.unam.mx}\\[20pt]
+Notas del curso del Posgrado en Ciencias Físicas 
+% redactadas por\\ \Large Isabel Domínguez\\ Instituto de Ciencias
+% Nucleares,
+% UNAM\\
+% \url{isabel@nucleares.unam.mx}}
+}
+\maketitle
+
+\pagenumbering{roman} \setcounter{page}{1}
+% \tableofcontents
+
+\let\v\verb
+
+\let\inl\lstinline
+
+\newcommand{\ejercicio}{\textbf{Ejercicio: }}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\xx}{\vec{x}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagebreak
+\pagenumbering{arabic}
+%\pagestyle{myheadings}
+
+%\addtolength{\parskip}{\baselineskip} %skips a line after every paragraph
+% \include{1-07feb2008/linux-bash}
+% \include{2-14feb2008/gnuplot-awk}
+% \include{3-21feb2008/python-basico}
+% \include{4-28feb2008/python-avanzado}
+% \include{5-06mar2008/python-como-herramienta}
+% \include{6-13mar2008/ejemplo-cargas}
+% \include{7-27mar2008/c++_basico}
+% \include{8-03apr2008/c++_clases}
+% \include{9-17apr2008/c++_aleatorios_sobrecarga}
+% \include{10-24apr2008/c++_punteros_animacion_herencia}
+% \include{11-05may2008/c++_plantillas}
+
+\include{introduccion}
+\include{sintaxis-basica}
+\include{aleatorios-funciones-caminatas}
+\include{contenedores-vectores}
+\include{archivos-argumentos-plantillas}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bibliography
+
+%\include{bibliografia}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,77 @@
+\chapter{La física estadística computacional}
+
+La física estadística tiene como meta el establecer las propiedades a nivel
+\emph{macroscópico} de un sistema compuesto por muchas partículas a nivel
+\emph{microscópica}. Como se ven en los cursos básicos de esta materia, esta
+meta se puede lograr en ciertos casos de manera exacta, como son los gases
+ideales y los paramagnetos.
+
+Pero rara vez se tratan en los cursos básicos sistemas que consisten en
+partículas \emph{en interacción}. La razón por este hecho es sencillo: es, en
+general, \emph{muy difícil} resolver problemas de este tipo. Sin embargo, esta
+clase de sistemas es exactamente donde pasan los fenómenos de interés físico,
+por ejemplo, las transiciones de fase, las propiedades emergentes, y las
+propiedades de transporte.
+
+
+
+\section{Métodos de Monte Carlo} 
+Este curso se trata de otro enfoque para poder obtener información acerca de
+sistemas de partículas en interacción --un enfoque \emph{computacional}.
+
+Aún si las cantidades macroscópicas que nos interesan se pueden ver como
+cantidades deterministas, del punto de vista de la física estadística, están
+dadas por \emph{promedios} de distintos tipos sobre cantidades microscópicas
+que fluctúan con cierta distribución de probabilidad.  
+
+Por lo tanto, estudiaremos principalmente métodos tipo \emph{Monte Carlo} --así
+llamados por emplear muchos números aleatorios para simular al
+sistema\footnote{Monte Carlo es una ciudad en el principado de Monaco, en el sur
+de Francia, famosa por el gran número de casinos que se encuentran ahí.}.
+
+
+\section{Elección de idioma de programación}
+Los métodos tipo Monte Carlo suelen requerir la repetición de ciertas
+operaciones bastante sencillas millones de veces. Por lo tanto, es necesario
+contar con un lenguaje de programación sumamente eficiente para llevar a cabo
+simulaciones de este tipo.
+
+Los dos candidatos más apropiados son Fortran 90 y C++. En este curso
+emplearemos C++, que cuenta con ciertos métodos más modernos de programación.
+Sin embargo, Fortran 90 es una buena opción también para este tipo de
+aplicaciones. 
+
+Unas razones por las cuales utilizamos C++ son los siguientes: es poderoso,
+flexible, rápido, y capaz de imponer estructura en proyectos grandes. Se pueden
+utilizar distintos estilos modernos de programación que permiten
+  flexibilidad y eficiencia al mismo tiempo. Además, se está ocupando cada vez
+más para los proyectos de cómputo científico en todo el mundo.
+
+Algunas desvantajas de C++ son: su sintaxis puede ser algo complicada;
+hay que recompilar después de cualquier cambio del
+programa; hay mucho que aprender (porque contiene muchas posibilidades);
+y los mensajes
+de error pueden ser difíciles de entender.
+
+\section{Entorno de análisis de datos}
+
+Una vez que se hayan generado datos, es necesario analizar los datos generados.
+Una buena opción moderna para eso es el idioma de programación interpretado
+Python, en conjunto con distintos paquetes y librerías de software libre que
+están disponibles para interactuar con Python.  También ocuparemos el programa
+\texttt{gnuplot} para gráficas.
+
+Todo el trabajo se llevará a cabo en un sistema operativo tipo Unix, que podría
+ser Linux ó BSD (la base de MacOS, por ejemplo). Los entornos tipo Unix proveen
+muchas herramientas de gran utilidad para el cómputo científico que no están
+disponibles en otros sistemas operativos.  Todas las herramientas utilizadas en
+el curso serán de \emph{software libre}.
+
+
+\section{Metas del curso}
+Las metas del curso son principalmente las siguientes dos:
+\begin{itemize}
+ \item Aprender a utilizar un idioma de programación potente y moderno; y
+\item Desarrollar técnicas computacionales para estudiar problemas que surgen
+en la física estadística.
+\end{itemize}

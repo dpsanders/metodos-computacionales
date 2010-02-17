@@ -1,0 +1,288 @@
+\chapter{Contenedores de datos: vectores}
+
+Muy a menudo es importante poder guardar y manipular distintas variables que
+están relacionadas entre sí de una u otra manera.
+
+\section{Caminante en dos dimensiones}
+
+>Cómo podríamos simular una caminata aleatoria en una red cuadrada en dos
+dimensiones? En cada paso, el caminante debería escoger una dirección al azar,
+por ejemplo con igual probabilidad.
+
+La manera más fácil de hacerlo es extendiendo el método de un caminante en una
+dimensión, dividiendo el intervalo $[0,1)$ ahora en cuatro partes, cada una de
+las cuales corresponde a una dirección diferente, y hacer un \inl{if} con
+varias opciones:
+\begin{lstlisting}
+int x, y;	# posicion de caminante en dos dimensiones
+double r = drand();
+
+if (r < 0.25) {
+  x++;
+}
+if ( (r > 0.25) && (r < 0.5) ) {
+  y++;
+}
+if ( (r > 0.5) && (r < 0.75) ) {
+  x--;
+}
+if ( (r > 0.75) ) {
+  y--;
+}
+\end{lstlisting}
+Nótese que la única manera de expresar condicionales del estilo de $0.25 < x <
+0.5$ en C++ es a través de una condicional de la forma \inl{&&}.
+
+Una manera más corta de expresar lo mismo es utilizando \inl{else}, seguido por
+otro \inl{if}:
+\begin{lstlisting}
+if (r < 0.25) {
+  x++;
+}
+else if (r < 0.5) {
+  y++;
+}
+else if (r < 0.75) {
+  x--;
+}
+else {
+  y--;
+}
+\end{lstlisting}
+
+Sin embargo, estos conjuntos de \inl{if} y \inl{else} son difíciles de leer,
+está fácil de cometer un error, y además es muy poco extendible. Por ejemplo,
+si ahora queremos estudiar un caminante en $3$ --ó en $d$-- dimensiones,
+entonces tenemos que reescribir el código por completo.  Por lo tanto,
+necesitamos replantear el problema, para que sea fácilmente extendible a otras
+situaciones.
+
+
+\section{Colecciones de datos: arreglos}
+
+La posición en $d$ dimensiones espaciales está representada por $d$ coordenadas.
+La manera más sencilla de representar este vector es simplemente definiendo $d$ 
+variables enteras por separado, como hicimos con \inl{x} y \inl{y} en dos
+dimensiones. Sin embargo, esto no refleja la
+estructura matemática, y tampoco será fácil de extender a otras dimensiones.
+
+Por lo tanto, es necesario buscar una \defn{estructura de datos} capaz de
+representar a este conjunto de coordenadas. Matemáticamente, podemos pensar en
+un \defn{vector} con $d$ entradas; buscamos entonces el análogo en C++ de un
+vector, visto como un conjunto ordenado de números.
+
+Este análogo es un \defn{arreglo} --una estructura que puede contener un número
+dado de  datos
+del mismo tipo con una orden dada. 
+En C++, la manera más clásica --pero menos flexible-- de declarar un
+arreglo de $d$
+entradas es
+\begin{lstlisting}
+int posicion[2];
+\end{lstlisting}
+Aquí, \inl{posicion} se declara como un arreglo de 2 enteros, los cuales se
+pueden accesar con
+\begin{lstlisting}
+posicion[0] = 3;
+posicion[1] = -17;
+cout << "El vector es (" << posicion[0] << ", " << posicion[1] << ")\n"
+\end{lstlisting}
+Nótese que la numeración empieza en \defn{cero} y termina en $d-1$ en C++.
+
+\section{Contenedores tipo \inl!vector!}
+
+Sin embargo, esta manera de declarar  arreglos resulta demasiado rígido.
+Otra manera más flexible, disponible solamente en C++, es utilizando
+la librería \inl{vector}, que forma parte de la biblioteca estándar de C++. 
+\inl{vector} es un \defn{contenedor}, que es cualquier estructura de datos que
+contiene distintos datos del mismo tipo. Se declara como sigue:
+\begin{lstlisting}
+vector<int> posicion(2);
+\end{lstlisting}
+lo cual declara \inl{posicion} como un arreglo que contiene enteros, y
+tiene
+tamaño inicial 2 (el número de elementos que puede contener).
+La sintaxis para accesar los elementos de un vector es igual a la para accesar
+un arreglo: \inl{posicion[0]}, etc.  
+
+La ventaja de un \inl{vector} es que es un arreglo \defn{dinámico} --su tamaño
+puede cambiar \emph{mientras el
+programa corre}. En cualquier momento, podemos utilizar el comando \inl{resize}
+para cambiar el número de entradas en el arreglo:
+\begin{lstlisting}
+vector<int> datos;
+cout << datos.size() << endl;
+
+datos.resize(10);
+datos.resize(20);
+\end{lstlisting}
+En la primera línea, se declaró \inl{datos} sin un tamaño. Por lo tanto,
+empieza como un arreglo vacío, con cero elementos, como nos muestra el comando
+\inl{datos.size()}.
+
+Estas dos funciones son los primeros ejemplos claros que hemos visto de la
+\defn{programación orientada a objetos}. Un \inl{vector} es un objeto, que
+tiene \defn{propiedades} (variables) --por ejemplo, su tamaño, y los datos que
+contiene-- y además tiene acciones (funciones), llamadas \defn{métodos}. Tanto
+las propiedades como los métodos le pertenecen al objeto, y se accesan a través
+del operador `\inl{.}'. 
+Esto tiene la ventaja de que otros objetos pueden tener variables y funciones
+con los mismos nombres, sin crear ningún conflicto, ya que queda claro en cada
+momento cuál función o variable se requiere, al especificar a qué objeto
+pertenece.
+
+Otro método sumamente útil de los \inl{vector}s es \inl{push_back()}, lo cual
+agrega un elemento al final del
+\inl{vector}. Por lo tanto, no es necesario preocuparse por el tamaño:
+\begin{lstlisting}
+vector<int> datos;
+datos.push_back(5);
+cout << "datos tiene " << datos.size() << " elementos\n";
+\end{lstlisting}
+
+% Aquí, \inl{push_back()} y \inl{size()} (que regresa el número de elementos
+% que están actualmente adentro del \inl{vector} son funciones. El punto entre
+% \inl{posicion} y los nombres de estas funciones indica que son funciones que
+% ``le pertenecen'' al \defn{objeto} \inl{posicion}. Este mecanismo permite que
+% distintos tipos de objetos tengan funciones con el mismo nombre.
+
+
+Nótese que el nombre \inl{vector} es un poco confuso del punto de vista
+matemática, ya que actúa simplemente como un contenedor de datos --no hay
+ninguna operación matemática definida para este tipo de \inl{vector}.
+Visto sus capacidad de cambiar de tamaño, podemos pensar en \inl{vector} más
+como una lista ordenada de objetos de un tipo dado que un vector matemático.
+
+\section{Caminatas aleatorias en dos dimensiones}
+Ahora podemos regresar a implementar una caminata aleatoria en dos dimensiones.
+La posición será un \inl{vector} de dos coordenadas, las dos enteros. >Cuál es
+la dinámica del caminante? 
+
+Visto en coordenadas Cartesianas, el caminante tiene un vector de
+desplazamiento $\Delta \xx$ en cada paso, desplazándose de $\xx$ a $\xx' = \xx
++ \Delta \xx$. En el caso más sencillo, este vector en dos dimensiones puede
+ser $(1,0)$, $(-1, 0)$, $(0, 1)$ ó $(0,-1)$.  De manera similar, en $5$
+dimensiones, tendríamos vectores de desplazamiento del tipo $(0,-1,0,0,0)$. En
+cada caso, hay exactamente una coordenada que cambia en cada paso, y esta
+coordenada se incrementa o decrementa en $1$.
+
+Por lo tanto, podemos pensar que en cada paso, el caminante decide en qué
+dirección moverse: verticalmente u horizontalmente, en el caso de dos
+dimensiones.  Luego decide si incrementar o decrementar la coordenada en esta
+dirección.  Para eso, necesitamos poder escoger un entero al azar.
+
+\section{Más números aleatorios}
+Hasta ahora, hemos generado números aleatorios solamente en el intervalo
+$[0,1)$. Para generar números en el intervalo $[0,c)$, para algún valor de
+$c>0$, simplemente escalamos por $c$. De ahí podemos ver que podemos generar
+números en el intervalo $[a,b)$ haciendo una traslación. Por lo tanto, podemos
+declarar una nueva función como sigue:
+\begin{lstlisting}
+double drand2(double a, double b) {
+  return a + (b-a) * drand();
+}
+\end{lstlisting}
+Pasamos dos variables a la función como \defn{argumentos}, cuyos valores
+emplea para calcular su respuesta. Además, aprovechamos el hecho de que ya
+contamos con la función \inl{drand} para no repetir código.
+
+De hecho, C++ cuenta con un mecanismo de \defn{sobrecarga} de funciones. Eso
+quiere decir simplemente que podemos dar el mismo nombre a dos funciones
+distintas, siempre y cuando difieren en el número de argumentos que tienen
+(para que el compilador puede distinguir cuál se requiere en cada
+situación). Por lo tanto, podemos reescribir la declaración como
+\begin{lstlisting}
+double drand(double a, double b) {
+  return a + (b-a) * drand();
+}
+\end{lstlisting}
+Esto tiene la ventaja de que no es necesario recordar cuál nombre hay que
+utilizar en cada caso.
+
+Ahora, para generar enteros al azar, podemos asociar el intervalo $[3,4)$ con
+$3$, el intervalo $[4,5)$ con $4$, etc. Así que si generamos $3.6$,
+regresaremos el entero $3$. Esto se logra con
+\begin{lstlisting}
+int irand(int i, int j) {
+  // Regresa un entero uniforme en $[i, j)$
+  // NB: No incluye j como posibilidad
+
+  return int( floor( drand(i, j) ) );
+}
+\end{lstlisting}
+Aquí, dado dos enteros $i$ y $j$, primero generamos un número aleatorio real
+entre $i$ y $j$. Nótese que estos enteros se convierten de manera automática a
+\inl{double}s al utilizarse como argumentos en la función \inl{drand()}.
+Luego se encuentra el mayor entero que es menor o igual al resultado con la
+función \inl{floor()}, que está definida en la librería \inl{<cmath>}.
+Finalmente, se convierte el tipo de la salida de \inl{floor()} (que regresa un
+\inl{double}) a un entero.  Nótese que el número $j$ nunca se puede generar por
+esta función. 
+
+\ejercicio Modifica la función \inl{irand()} para generar un entero uniforme
+entre $i$ y $j$ que sí puede incluir $j$ como posibilidad.
+
+
+\section{Caminante aleatorio en 2 dimensiones}
+Regresando al caminante aleatorio en 2 dimensiones,
+podemos reescribir la parte principal como sigue:
+\begin{lstlisting}
+vector<int> posicion(2);
+int d;
+
+int direccion = irand(0,2); 	
+
+double r = drand();
+if (r < 0.5) {
+  posicion[direccion] ++;
+}
+else {
+  posicion[direccion] --;
+}
+\end{lstlisting}
+
+{\dbend \small
+Las condicionales en C++ son expresiones booleanas, que también toman valores.
+Por ejemplo, 
+\begin{lstlisting}
+int b = -1;
+int a = (b < 0);
+\end{lstlisting}
+le asigna a \inl{a} el valor del resultado de evaluar la condición \inl{b < 0}.
+Estos valores
+se pueden utilizar para hacer cálculos.
+
+\ejercicio >Cómo se puede reescribir el caminante aleatorio en dos dimensiones
+% para evitar los \inl{if}? Eso podría ser más eficiente en ciertos tipos de
+máquina --como siempre, es cuestión de probar para ver cual opción es más
+rápida.
+}
+
+
+
+% \ejercicio\\
+% (i) Implementa una caminata aleatoria en 2 dimensiones, con una posición que
+% es
+% un vector de dos coordenadas. En cada paso, se elige una dimensión al azar, y
+% se
+% elige al azar si incrementar o decrementar la coordenada en esta dimensión.
+
+(i) Traza la trayectoria de una caminata aleatoria en 2 dimensiones.
+Utiliza el comando \\
+\inl{set size ratio -1} para que los ejes se vean en la
+proporción correcta (1:1).
+
+(iii) Traza la trayectoria de 100 caminatas aleatorias.
+
+(iv) Dibuja las posiciones \emph{finales} de 10000 caminatas aleatorias después
+de distintos números de pasos.
+
+\ejercicio
+Repite el ejercicio anterior para una caminata aleatoria en 3 dimensiones,
+utilizando el comando \inl{splot} de \inl{gnuplot} para dibujar en 3
+dimensiones. (En las nuevas versiones de \inl{gnuplot}, se puede utilizar
+\inl{set view equal xyz} para obtener un efecto parecido a 
+\inl{set size ratio -1} en dos dimensiones.)
+
+% \section{Mejorando la salida en \inl{gnuplot}}
+

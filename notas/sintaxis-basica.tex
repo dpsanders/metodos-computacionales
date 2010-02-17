@@ -1,0 +1,530 @@
+\chapter{Sintaxis básica de C++}
+
+% \source{progs/primero.cpp}{}
+
+C++ es un lenguaje de programación \emph{compilado} --es decir, para correr un
+programa, es necesario pasar a través de una etapa de compilación para
+convertirlo en código que la máquina puede utilizar. Aún si eso puede ser
+latoso, hace más eficiente (rápido) el procedimiento final de correr el
+programa. 
+
+C++ se desarrolló a partir del lenguaje C, por lo cual retiene la sintaxis
+básica del mismo. Sin embargo, C++ tiene conceptos de más alto nivel que C, 
+los cuales
+adoptaremos  desde el principio.
+
+% \lstinputlisting{progs/primero.cpp}
+
+\section{Primeros pasos}
+El primer programa clásico es el ``<Hola, mundo!'', que en C++ se podría
+escribir como sigue:
+\source{primero.cpp}{}
+
+Para correrlo, guardamos el código en el archivo \ttt{primero.cpp} y lo
+compilamos y corremos con\footnote{El signo \inl{\$} denota el ``prompt''
+en la terminal donde se teclean los comandos}:
+\begin{lstlisting}
+$ g++ primero.cpp -o primero
+$ ./primero
+Hola, mundo!
+\end{lstlisting}
+% }
+
+Aquí, \inl!g++! es el nombre del compilador de C++ del proyecto GNU, y \inl!-o!
+indica que la salida (``output'') va a ser un ejecutable que se llama
+\inl!primero!. El comando \inl!./primero! ejecuta este programa --el punto
+indica que se encuentra en el directorio actual.
+
+En el código, el \lstinline!#include! es una instrucción al compilador de
+\defn{incluir} un archivo de código fuente predefinido, que en este caso provee
+los comandos \inl!cout! y \inl!endl!. El primero imprime lo que sigue después
+del \inl!<<!, y el segundo da una nueva línea.  Los dos están adentro del
+\defn{espacio de nombres} \inl!std!  (``estándar''). Como se vuelve molesto
+teclear \inl!std::! todo el tiempo, es conveniente utilizar el comando
+\inl!using namespace std!, que da la siguiente versión mejorada del código:
+
+\source{primero2.cpp}{}
+
+La línea \inl!int main()! declara una \defn{función} (subrutina) llamada
+\inl!main!. Cada programa de C++ debe contener una función con este nombre,
+donde la ejecución del programa empezará. Las parentesis contienen los
+argumentos de la función (información que se manda a
+la función), e \inl!int! indica que regresa un entero, que indicará si el
+programa terminó con exito (valor $0$), como indica \inl!return 0!, o no (valor
+no-cero).
+
+Las llaves \inl!{! y \inl!}! encierran un \defn{bloque} de código, que se trata
+como una unidad. En este caso, el bloque es el \defn{cuerpo} de la función.
+
+Nótese que cada instrucción, o comando, en C++, tiene que terminar con un
+\emph{punto y coma}, \inl!;! --el olvidar algun \inl!;! llevará a un sinfin de
+errores al momento de compilar el programa!
+
+Los \defn{comentarios} se ponen después de \inl!//!; el resto de la línea es un
+comentario.
+
+El \inl!'\n'! es un carácter especial, que también quiere decir que imprima una
+nueva línea; otro parecido es un ``tabulador'' (un espacio especial para
+alinear), dado por \inl!'\t'!.  (Los caracteres individuales se escriben entre
+apóstrofes, \inl!'!, mientras que las cadenas de varios caracteres se escriben
+entre comillas, \inl!"!.)
+
+En el resto de este capítulo, normalmente daremos fragmentos de código. Para
+correrlos, es necesario incluirlos en un programa completo de este tipo.
+
+\section{Variables}
+Para llevar a cabo cálculos, necesitamos poder guardar datos en
+\defn{variables}. Éstas se se tienen que \defn{declarar}, es
+decir, especificar de qué tipo son, 
+antes de utilizarse:
+
+\begin{lstlisting}
+int num_particulas;   	  // declarar una variable a de tipo entero (integer)
+double temperatura;   // declarar una variable real de doble precision
+\end{lstlisting}
+
+Una declaración  reserva suficiente espacio en la memoria
+para guardar el valor de la variable, y le da información al compilador
+que puede utilizar para detectar errores, si intentamos manipular una variable
+de una manera que no corresponde a su tipo.
+
+Principalmente usaremos \inl!int! y \inl!double!.  Normalmente ya no se utilizan
+los números reales de precisión sencilla (\inl!float!)\footnote{Eso ya ha
+cambiado con la actual programación de los GPUs, que están diseñados para
+funcionar en precisión sencilla.}, ya que
+las máquinas modernas están optimizadas para usar números de doble precisión.
+
+Se asignan valores a las variables con \inl{=}, que también se puede hacer al
+momento de declarar las variables:
+\begin{lstlisting}
+num_particulas = 10;
+temperatura = 1.5;
+
+int a = 3;
+double b = -1.3e5;    // notacion cientifica 
+\end{lstlisting}
+
+Los valores de las variables, como la mayoría de los objetos, se pueden imprimir
+utilizando \inl!cout!, como sigue. Lo que va dentro de comillas (\inl!"!) se
+imprime exactamente tal cual. Los \inl!<<! se pueden encadenar el número de
+veces que sea necesario (siempre respetando que el código sea legible):
+\begin{lstlisting}
+cout << "a = " << a << "; b = " << b << endl;
+\end{lstlisting}
+
+Las declaraciones de variables se pueden hacer en \emph{cualquier lugar} del
+programa\footnote{A diferencia de C.}.  El mejor estilo es el de declarar una
+variable lo más cercano a su primer uso.
+
+
+\section{Flujo de entrada}
+
+Para permitir al usuario que introduzca datos para guardarse en variables,
+se puede utilizar \inl!cin!, de manera opuesta a \inl!cout!:
+\begin{lstlisting}
+int num_particulas;
+cout << "Cuantas particulas? ";
+cin >> num_particulas;
+
+double temperatura, presion;
+cout << "Valor de temperatura y presion? ";
+cin >> temperatura >> presion;
+cout << "Usando temperatura = " << temperatura 
+		<<  "; presion = " << presion << endl;
+\end{lstlisting}
+(Puede causar problemas el utilizar acentos dentro del código, por lo cual los
+evitamos.)
+Nótese que en este caso, si la entrada que damos es \inl!3, 4!, entonces el
+valor de presión está equivocada. En un programa real, habría que checar este
+tipo de errores.
+
+
+
+\section{Condicionales}
+
+Muy a menudo, es necesario comprobar si alguna condición se satisfaga o no.
+El caso más sencillo se implementa con \inl!if!:
+\begin{lstlisting}
+int a = 3; 
+if (a > 0)  {      // NB: Las parentesis son obligatorias
+  cout << "a es positivo" << endl; 
+}
+\end{lstlisting}
+Nótese que se utiliza un bloque, entre \inl!{! y \inl!}!, para delimitar el
+código que se ejecutará si la condición se satisface.
+Se puede agregar una alternativa que se ejecuta si la condición no se satisface:
+\begin{lstlisting}
+else {
+  cout << "a es negativo " << endl;
+  cout << "Su valor absoluto es " << -a << endl;
+}
+\end{lstlisting}
+Nótese que aquí hay dos comandos que se ejecutan como parte del bloque.
+
+Las condiciones que se pueden probar incluyen:
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+igualdad & \verb!==! \\
+desigualdad & \verb/!=/ \\
+AND & \verb!&&! \\
+OR & \verb!||! \\
+NOT & \verb/!/ \\
+mayor que & \verb!>! \\
+mayor o igual que & \verb!>=! \\
+menor que & \verb!<! \\
+menor o igual que & \verb!<=! \\
+\hline 
+\end{tabular}
+\end{center}
+
+Para probar más de una condición simultáneamente, se utilizan \inl!&&!  
+(y) y \inl!||! (ó).   Las condiciones que se juntan se ponen dentro de
+otra paréntesis:
+
+\begin{lstlisting}
+int a = 3, b = 5;
+
+if ( (a < 0) && (b < 0) ) {
+	cout << "a y b son negativos los dos" << endl;
+}
+
+if ( (a < 0) || (b < 0) ) {
+	cout << "Al menos uno de a y b es negativo" << endl;
+}
+\end{lstlisting}
+
+
+
+\section{Bucles}
+
+El poder de las computadoras para llevar a cabo cálculos proviene de su
+capacidad de repetir las mismas operaciones una y otra vez, a través de los
+\defn{bucles}.
+
+\subsection{\inl!while!}
+
+El bucle más sencillo, y más básico, es el \inl{while}, que se ejecuta
+\emph{mientras} una
+condición se satisface.  Normalmente se utiliza un \inl{while} cuando no se
+sabe de antemano
+cuantas veces hay que iterar.  Las condiciones se emplean de la misma manera
+como para un \inl{if}.
+
+Por ejemplo, una manera (<no necesariamente la mejor!) de contar la mayor
+potencia de $2$ menor que un número dado sería:
+\begin{lstlisting}
+int valor = 63201;
+int potencia = 0;
+
+while (valor > 1) {
+  cout << "valor = " << valor << endl;
+  valor /= 2;     // equivalente a:  valor = valor / 2
+  potencia ++;
+}
+
+cout << "La mayor potencia de 2 es " << potencia+1 << endl;
+\end{lstlisting}
+Nótese que la aritmética con variables se lleva a cabo de manera intuitiva.
+Es un procedimiento muy común el actualizar a una variable, reemplazando su
+valor actual con un valor nuevo que se calcula mediante el valor actual.
+
+Para este fin, C++ provee una serie de operadores muy prácticos, que combinan
+un operador aritmético con un \inl{=}. Por ejemplo, \inl{a+=b} es una
+abreviación de \inl{a = a+b}. Estas combinaciones tienen la ventaja de
+enfatizar el hecho de que se está actualizando el valor de una variable a partir
+del valor actual.
+
+Además, hay operadores especiales \inl{++} y \inl{--} para incrementar y
+decrementar, respectivamente, el valor de una variable \emph{entera} solamente.
+
+
+\subsection{\inl!for!}
+
+Normalmente se utiliza un \inl{for} cuando se sabe de antemano cuantas
+veces se quiere iterar.  La sintaxis es:
+\begin{lstlisting}
+for (inicializacion;  condicion;  actualizacion) {
+  ...
+}
+\end{lstlisting}
+donde
+\begin{itemize}
+\item inicialización: lo que hace al principio del bucle;
+\item condición: lo que se prueba al final de cada iteración;
+\item actualización: el comando que se ejecuta al final de cada iteración.
+\end{itemize}
+
+Por ejemplo, para sumar los números de $1$ a $10$:
+\begin{lstlisting}
+int n = 10;
+int total = 0;
+
+for (int i = 0; i < n; i ++) {
+	cout << i << "\t" << total << endl;    // '\t' es un caracter de tab
+	total += i;  
+}
+cout << "El total es " << total << endl;
+\end{lstlisting}
+
+Nótese que se declaró el entero \inl{i} en el \emph{paso de inicializacion} del
+bucle. Por lo tanto,  esta variable existe \emph{solamente dentro del
+bucle}.  Así se pueden reutilizar nombres de variables comunes, sin
+tener que inventar nuevos nombres.
+
+\subsection{\inl!do!--\inl!while!}
+
+Un bucle \inl{do}--\inl{while} es el opuesto de un \inl{while}: la condición se
+evalúa al final del bucle, así que el código se ejecuta al menos una
+vez. Se utiliza tal vez menos que los otros dos tipos de bucle.
+\begin{lstlisting}
+int i = 0;
+do {
+	cout << i << endl;
+	i++;
+} while (i < 10);
+\end{lstlisting}
+
+
+ \section{Funciones matemáticas}
+
+
+Algunas funciones matemáticas ya están  implementadas. Para utilizarlas, se
+requiere incluir la librería \inl!cmath!:
+\begin{lstlisting}
+#include <cmath>
+
+cout << "El seno de 3.5 es " << sin(3.5);
+cout << "La raiz cuadrada de 700 es " << sqrt(700);
+\end{lstlisting}
+
+La librería \inl{cmath} incluye, entre otros, \inl{exp}, \inl{sin}, \inl{cos},
+\inl{tan}, \inl{asin} 
+  (seno inverso o arcseno), \inl{acos}, \inl{atan} y, \inl{log}. También hay
+otras funciones 
+evidentes, por ejemplo \inl{log1p(x)} regresa $\log(1+x)$. Para tomar potencias
+existe
+\inl{pow(x,y)}, que devuelve el valor de $x^y$.
+
+Todas las funciones toman como argumentos números tipo \inl{double}.
+
+Para funciones más complicadas, por ejemplo funciones especiales, hay librerías
+disponibles como software libre. Una muy buena es el Gnu Scientific Library
+(GSL). Sin embargo, hay que reconocer que el interfaz de esta librería es de
+estilo C, no C++ propiamente.
+
+\ejercicio
+Implementa el \emph{algoritmo Babilónico} para encontrar la raíz cuadrada de
+un numero $y$, como sigue.
+Si $a_n$ es un estimado de la raíz cuadrada, entonces un mejor estimado es
+\begin{equation}
+ a_{n+1} := \frac{1}{2} \left(a_n + \frac{1}{a_n} \right).
+\end{equation}
+Pon esto adentro de una \defn{iteración}, empezando desde cualquier condición
+inicial $a_0 \neq 0$.
+Compara el resultado obtenido a cada paso con
+el
+resultado exacto. Utiliza una gráfica para investigar la velocidad de
+convergencia del algoritmo.
+
+
+
+\section{Resguardo de datos}
+Ahora que hemos producido algunos datos, debemos procesarlos para entenderlos.
+La primera etapa es simplemente graficarlos para tener una idea intuitiva de la
+forma de los mismos.
+
+Para poder hacerlo, hay dos maneras posibles: (i) mandar los datos a graficar
+directamente desde el mismo programa de C++; y (ii) guardar los datos en un
+archivo, que luego se graficará con otra herramienta. Posteriormente
+abarcaremos el inciso (i); por el momento, ocuparemos la herramienta
+\texttt{gnuplot} para graficar los datos.
+
+Una opción para guardar los datos en un archivo es la de abrir un archivo
+dentro del programa y escribir ahí. Esta opción la veremos más adelante; por el
+momento, aprovecharemos un método que nos proporciona el \defn{shell}, o
+\defn{terminal} en Unix: podemos \defn{redirigir} la salida de cualquier
+programa a un archivo.  
+
+Por ejemplo, para mandar la salida del programa
+\inl{babilonico} a un archivo llamado \inl{sqrt.dat}, podemos poner
+directamente en la línea de comandos el comando
+\begin{lstlisting}
+$ babilonico > sqrt.dat
+\end{lstlisting}
+Ya no vemos la salida del programa en la pantalla, sino se guarda la misma en
+el archivo. En este caso, sobreescribirá el contenido del archivo. Para agregar
+los nuevos datos al contenido ya existente, hacemos
+\begin{lstlisting}
+$ babilonico >> sqrt.dat
+\end{lstlisting}
+
+\section{Ver contenido de un archivo}
+
+Para verificar que los datos se han guardado de manera adecuada, podemos copiar
+el contenido del archivo a la terminal con el comando
+\begin{lstlisting}
+$ cat sqrt.dat
+\end{lstlisting}
+El comando \inl{cat} tiene como fin el de ``concatenar'' su entrada a su salida.
+En este caso, la entrada es el archivo \inl{sqrt.dat}, y la salida es la
+terminal.
+
+Otro uso de \inl{cat} es para crear un archivo, por ejemplo
+\begin{lstlisting}
+$ cat > datos1.dat
+\end{lstlisting}
+creará un archivo \inl{datos1.dat} con el contenido que se teclea en la
+terminal --aquí, la entrada es la terminal y la salida se ha redireccionado al
+archivo.
+
+Finalmente, \inl{cat} puede literalmente concatenar archivos, por ejemplo
+\begin{lstlisting}
+$ cat datos1.dat datos2.dat >> datos3.dat
+\end{lstlisting}
+
+\section{Graficamiento de datos con \inl{gnuplot}}
+Ahora contamos con los datos en un archivo de texto \inl{sqrt.dat}.
+Utilizaremos \texttt{gnuplot} para graficarlos.
+
+\texttt{gnuplot} es un programa con el que podemos producir gráficas
+en $2$ y $3$
+dimensiones, con calidad de publicación (<si trabajamos un poco!)
+ Posee una interfaz de línea de comandos, y
+también puede ser utilizado desde otro programa o al escribir ``scripts'' 
+(programas con listas de comandos de \texttt{gnuplot}).
+Cuenta con gráficas interactivas, además de 
+una gran variedad de formatos para exportar las gráficas producidas, 
+incluyendo a Postscript y \texttt{png}.
+Hay distintas demostraciones de sus capabilidades en la página
+\url{http://www.gnuplot.info/demo/}.
+
+En la línea de comandos ejecutamos
+\begin{lstlisting}
+ $ gnuplot
+\end{lstlisting}
+y así entramos en el entorno del programa.
+
+
+
+\subsection{Gráficas de funciones}
+Las gráficas más sencillas son las de funciones predefinidas, como
+\begin{lstlisting}
+$ gnuplot
+gnuplot> plot sin(x)
+gnuplot> plot sin(x), cos(x) 	# graficar dos funciones juntas
+\end{lstlisting}
+
+Para dibujar estas funciones, las evalua en distintos puntos
+\begin{lstlisting}
+gnuplot> plot sin(x) with points 		# abreviacion: w p
+gnuplot> set samp 500 		#aumentar el numero de puntos
+gnuplot> replot 		# o teclear 'e' en la ventna de la grafica
+\end{lstlisting}
+
+Se pueden definir variables y funciones 
+\begin{lstlisting}
+gnuplot> a=3
+gnuplot> plot sin(a*x)
+gnuplot> print a
+3
+\end{lstlisting}
+
+\subsection{Dibujar datos desde archivos}
+
+Para dibujar el contenido del archivo \inl{sqrt.dat}, ponemos
+\begin{lstlisting}
+gnuplot> plot "sqrt.dat" 		# usa solo la primera (x) y segunda columna (y)
+\end{lstlisting}
+Por defecto, dibuja utilizando puntos.
+\begin{lstlisting}
+gnuplot> plot "sqrt.dat"  with lines		# abreviacion: w l
+gnuplot> plot "sqrt.dat", "" using 2:3  	# abreviacion: u
+\end{lstlisting}
+Aquí, dibujamos dos veces el mismo archivo (al poner un nombre de archivo en
+vacío), y ocupamos las columnas $2$ y $3$ para la segunda gráfica.
+También se pueden mezclar datos y funciones:
+\begin{lstlisting}
+gnuplot> plot "sqrt.dat"  w points, sqrt(x) w l		# abreviacion: w p
+\end{lstlisting}
+% 
+% 
+% 
+% gnuplot> plot "in.dat" using 2:3 #usar las columnas 2 y 3 del archivo
+% gnuplot> plot "in.dat", "in.dat" using 1:3 #usar las columnas 1 y 3 
+% gnuplot> plot "in.dat", '' u 2:3   #gráfica (1,2) y (2,3)
+%                                    # no repetir el nombre del archivo
+% gnuplot> plot "in.dat", x*x #mezcla de datos y funciones
+% gnuplot> plot "in.dat" u 3:($1+$1)   #se pueden manipular los datos
+% #eje x es la columna 3 y el eje y la suma de la columna 1 (1+1) 
+% gnuplot> plot "in.dat" u ($1+$2):(log($3)) #dibuja x^3 en función de 
+%                                            #x+x^2
+% \end{Verbatim}
+% 
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data1.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data2.eps}
+% \caption []{\label{data12}}
+% \end{figure}
+% 
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data3.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data4.eps}
+% \caption []{\label{data34}}
+% \end{figure}
+% 
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data5.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/data6.eps}
+% \caption []{\label{data56}}
+% \end{figure}
+% 
+% Entramos e
+
+
+
+
+\subsection{Exportación de las gráficas}
+\ttt{gnuplot} cuenta con un sistema de ayuda. Por ejemplo, podemos conocer
+las distintas ``terminales''  (formatos de salida) disponibles con
+\begin{lstlisting}
+gnuplot> help set term
+\end{lstlisting}
+
+Para crear un archivo de Postscript (formato EPS) con la grafica, que cuente
+con etiquetas en los ejes, tenemos:
+\begin{lstlisting}
+gnuplot> set xlabel "x"
+gnuplot> set ylabel "sin(3x)"
+gnuplot> set term post eps
+gnuplot> set out "sin.eps"
+gnuplot> replot
+gnuplot> set out
+gnuplot> !okular sin.eps		# manda un comando a la terminal
+\end{lstlisting}
+
+Un ejemplo interesante:
+\begin{lstlisting}
+gnuplot> f(x) = sin(a*x)
+gnuplot> plot a=1, f(x) title 'sin x', a=2, f(x) title 'sin 2x', 
+              a=3, f(x) t 'sin 3x'
+\end{lstlisting}
+
+% 
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/sin.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/sincos.eps}
+% \caption []{\label{sincos} }
+% \end{figure}
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/points.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/morepoints.eps}
+% \caption []{\label{morepoints} }
+% \end{figure}
+% \begin{figure}[h!]
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/variables.eps}
+% \includegraphics[width=0.5\linewidth]{2-14feb2008/gnuplot/function.eps}
+% \caption []{\label{functions} }
+% \end{figure}
+
+ 
