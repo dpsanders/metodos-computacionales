@@ -1,0 +1,8 @@
+#!/bin/bash
+# Script para correr 10 veces mi cosa
+for i in $( seq 1 10 )
+do ./num-alea >> cam.dat
+	echo >> cam.dat
+	echo >> cam.dat
+	sleep 1
+done
