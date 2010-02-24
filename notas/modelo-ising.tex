@@ -1,0 +1,121 @@
+\chapter{El modelo de Ising y la física estadística}
+En este capítulo, introduciremos un modelo básico en la física estadística, el
+\defn{modelo de Ising}, y reseñaremos los procedimientos básicos de la física
+estadística.  
+
+La meta de la física estadística es la de calcular las propiedades
+macroscópicas y termodinámicas de un sistema, a partir de una descripción
+microscópica del mismo.  Por lo tanto, para cada modelo, cabe especificarlo al
+dar su \defn{Hamiltoniano}, es decir, la función que determina la energía total
+del sistema cuando éste se encuentra en un microestado dado.
+
+\section{El modelo de Ising}
+El modelo de Ising es interesante ya que es un modelo sumamente
+sencillo de plantear, pero que exhibe distintos fenómenos de interés, tales
+como las transiciones de fase.  Es un modelo de un imán cristalino, y consiste
+en muchas partículas, llamadas \defn{espines}, que se encuentran en lugares
+fijos en una red cristalina. Los espines pueden tomar, en el caso más sencillo,
+dos valores diferentes, apuntándose hacia arriba o hacia abajo.  
+
+Los espines
+modelan los momentos magnéticos con los electrones sin pareja en un metal
+ferromagnético como el hierro. En tales materiales, hay una interacción entre
+espines cercanos, llamada la \defn{interacción de intercambio}, que implica que
+éstos tienen una tendencia a alinearse con sus vecinos, ya que eso es un estado
+más energéticamente favorable.
+
+Para convertir esta descripción en un modelo, consideremos una red de $N$
+sitios, con etiquetas $i=1, \ldots, N$. En cada sitio $i$ de la red hay un
+espín $\s_i \in \{\pm1\}$, es decir, cada espín puede tomar los valores $+1$ y
+$-1$ (arriba y abajo, respectivamente).  La configuración completa del sistema
+se denota por $\ss \defeq (\s_i)_{i=1,\ldots,N}$.
+
+Para especificar la energía, consideraremos solamente interacciones entre pares
+de espines, especificadas a través de la energía de interacción $E(i,j)$ entre
+los espines $\s_i$ y $\s_j$.  Si los espines tienen el mismo valor, entonces
+asignaremos una energía favorable $E(i,j) = -J$, mientras que si tienen valores
+opuestos, la energía es $E(i,j) = J$. Además, solamente los espines
+\emph{vecinos} podrán interactuar. 
+
+Entonces tenemos
+\begin{equation}
+E(i,j) = \begin{cases} -J \s_i \s_j, & \text{si $i$ y $j$ son sitios vecinos;}\\
+          0, & \text{si no.}
+         \end{cases}
+\end{equation}
+Nótese que el producto $\s_i \s_j$ da justamente $1$ si los espines están
+alineados, y $-1$ si no.
+
+Por lo tanto la energía total de una configuración es
+\begin{equation}
+\HH(\ss) = E(\ss) \defeq -J \sum_{\langle i, j \rangle} \s_i \s_j.
+\end{equation}
+Aquí, la notación $\langle \cdot \rangle$ denota una suma sobre pares de sitios
+vecinos en la red. Hacemos una distinción entre la energía de interacción
+$E(\ss)$, y la energía total del sistema $\HH(\ss)$. En este caso, no hay otra
+contribución a la energía, así que el Hamiltoniano está dado por la energía de
+interacción entre espines.
+Podemos pensar en esta suma como una suma sobre los
+\emph{enlaces} entre los sitios.
+
+\section{Física estadística}
+Ya que hemos especificado un modelo de manera microscópica, la física
+estadística da una ``receta'' para calcular sus propiedades termodinámicas
+macroscópicas. Boltzmann y Gibbs mostraron que si ponemos nuestro sistema
+microscópico en contacto con un baño térmico a temperatura $T$, pero tal que no
+puede intercambiar materia con el baño, entonces el sistema se puede modelar
+utilizando el \defn{ensamble}\footnote{También llamado ``conjunto
+representativo''.} \defn{canónico}, en donde
+la frecuencia con la cual el
+sistema visita una configuración $\ss$ dada es
+\begin{equation}
+ p(\ss) \propto e^{-\beta \HH(\ss)},
+\end{equation}
+donde $\beta \defeq 1/(k_{B} T)$ es la temperatura inversa, y $k_B$ es la
+constante de Boltzmann. Tomaremos siempre unidades para las cuales $k_B = 1$.
+
+Normalizando la distribución de probabilidad, usando que $\sum_{\ss \in \Omega}
+p(\ss) = 1$, donde $\Omega$ es el conjunto de estados posibles del sistema,
+obtenemos que
+\begin{equation}
+ p(\ss) = \frac{1}{Z(\beta)} e^{-\beta \HH(\ss)},
+\end{equation}
+donde 
+\begin{equation}
+Z(\beta) \defeq \sum_{\ss \in \Omega} e^{-\beta \HH(\ss)}
+\end{equation}
+se llama la \defn{función de partición}, ya que involucra la manera en la
+cual se distribuye, o particiona, la probabilidad entre los distintos
+microestados del sistema.  El promedio de un observable (es decir, una
+cantidad que podemos medir en el sistema) $Q$ está dado por
+\begin{equation}
+ \mean{Q} \defeq \sum_{\ss \in \Omega} Q(\ss) p(\ss).
+\end{equation}
+
+
+Si conocemos $Z(\beta)$, entonces podemos derivar todas las cantidades
+termodinámicas. Por ejemplo, la energía interna macroscópica $U$ se identifica
+--en el \defn{límite termodinámico} $N\to \infty$, $V \to \infty$ con $\rho
+\defeq N/V$ fija-- con el promedio microscópico $\mean{E}$. Pero
+\begin{equation}
+\mean{E} =  \sum_{\ss} E(\ss) p(\ss) = \frac{1}{Z} E(\ss) e^{-\beta E(\ss)}  =
+-\frac{1}{Z} \dd{Z}{\beta} = -\dd{}{\beta} \log Z(\beta).
+\end{equation}
+Además, podemos decir que la energía libre $F(\beta)$ está dada por
+\begin{equation}
+ F(\beta) = -k_B T \log Z(\beta).
+\end{equation}
+De una manera similar, las cantidades macroscópicas termodinámicas se pueden
+escribir como funciones y derivadas de la función de partición $Z(\beta)$.
+
+\section{Los cálculos sin imposibles}
+En principio, la receta que provee la física estadística nos permite calcular
+cualquier cantidad macroscópica deseada, a partir del conocimiento del
+Hamiltoniano y la función de partición de un sistema. Sin embargo, en la
+práctica esta esperanza no se cumple, ya que los cálculos requeridos son
+\emph{intratables}, debido a un problema combinatórico.
+
+
+
+
+
