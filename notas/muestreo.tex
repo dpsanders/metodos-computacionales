@@ -1,0 +1,58 @@
+\chapter{Muestreo}
+Como vimos en el capítulo anterior, es normalmente imposible llevar a cabo las
+sumas requeridas por la teoría de la física estadística para calcular la
+función de partición y los promedios deseados. Por lo tanto, es necesario
+\defn{muestrear} ciertas configuraciones ``representativas'', es decir, escoger
+de manera estadística o aleatoria --pero al mismo tiempo, lista-- las
+configuraciones sobre las cuales sumaremos.
+
+La primera idea que podríamos tener es la de muestrear de manera uniforme sobre
+todas las configuraciones, escogiéndolas ``al azar'', es decir, con igual
+probabilidad, tal que cada espín tiene igual probabilidad de apuntar hacia
+arriba o hacia abajo.  Sin embargo, está intuitivamente claro que eso dará
+configuraciones $\ss$ que tienen aproximadamente el mismo número de espines para
+arriba como para abajo, y por lo tanto, una magnetización $M(\ss)$ y energía
+$E(\ss)$ que se concentran alrededor de $0$. Eso sería adecuado para investigar
+las propiedades del sistema a altas temperaturas, donde justamente las
+configuraciones tienen un peso estadístico, es decir, probabilidad $p(\ss)$, más
+o menos uniforme. Sin embargo, a bajas temperaturas, el sistema se concentrará
+alrededor de sus estados bases, donde todos los espines se alínean, mientras
+que tales configuraciones casi nunca se generarán de manera uniforme.
+
+\section{Muestreo no-uniforme}
+Por lo tanto, es necesario introducir un muestreo no-uniforme, es decir,
+escoger distintas configuraciones según una distribución de probabilidad
+$p(\mu)$ (que no necesariamente es la de Boltzmann). Más adelante veremos cómo
+eso se puede hacer; por lo momento, supongamos que ya lo hemos logrado.
+
+Consideremos un muestreo finito de configuraciones generadas según esta
+distribución de probabilidad, $(\mu_1, \ldots, \mu_M)$. En una corrida larga,
+esperamos que algunas de estas configuraciones son iguales. Enumeremos las
+\emph{distintas} configuraciones como $\mu^{(1)}, \ldots, \mu^{(C)}$. Entonces
+$\mu^{(i)}$ debería aparecer $M p(\mu^{(i)})$ veces, aproximadamente. 
+
+Si ahora queremos calcular, por ejemplo, la función de partición, pensaríamos
+primero en calcular
+\begin{equation}
+Z \stackrel{\textrm{?}}{\simeq} \sum_{i=1}^M e^{-\beta E(\mu_i)}.
+\end{equation}
+Sin embargo, eso daría
+\begin{equation}
+Z \stackrel{\textrm{?}}{\simeq} \sum_{i=1}^C p(\mu^{(i)}) e^{-\beta
+E(\mu^{(i)})}.
+\end{equation}
+Por lo tanto, las configuraciones aparecen en la suma pesada por la
+distribución $p(\mu)$ de muestreo que nosotros imponemos.
+
+Para eliminar este efecto no-deseado, es necesario dividir por las $p$:
+\begin{equation}
+ Z \simeq  \sum_{i=1}^M \frac{1}{p(\mu_i)} e^{-\beta
+E(\mu_i)};
+\end{equation}
+\begin{equation}
+ \mean{Q} \simeq \frac{\sum_{i=1}^M \textfrac{1}{p(\mu_i)} Q(\mu_i) e^{-\beta
+E(\mu_i)}}{\sum_{j=1}^M \textfrac{1}{p(\mu_j)} e^{-\beta
+E(\mu_j)}}.
+\end{equation}
+
+

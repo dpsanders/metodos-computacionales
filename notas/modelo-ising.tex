@@ -113,7 +113,21 @@ En principio, la receta que provee la física estadística nos permite calcular
 cualquier cantidad macroscópica deseada, a partir del conocimiento del
 Hamiltoniano y la función de partición de un sistema. Sin embargo, en la
 práctica esta esperanza no se cumple, ya que los cálculos requeridos son
-\emph{intratables}, debido a un problema combinatórico.
+\emph{intratables}, debido al siguiente problema combinatórico.
+
+Consideremos el modelo de Ising con $N$ espines. El número total de
+configuraciones del sistema es $|\Omega| = 2^N$. Para un sistema pequeño, de
+$100 \times 100$ espines en dos dimensiones, tenemos que $N=10000$, y por lo
+tanto $|\Omega| = 2^{10000} \simeq 10^{3000}$!  Este número es realmente
+enorme, <aproximadamente $10^{3000}$ veces la edad del universo en segundos!
+Por lo tanto, no importa el tamaño de la computadora que tengamos, nunca
+podremos llevar al cabo el cálculo de la función de partición ``exacta''.
+
+La solución a esto es la de aproximar las sumas con sumas sobre un número
+reducido de configuraciones. Sin embargo, eso funcionará solamente si las
+configuraciones sobre las cuales se suma se escogen de manera apropiada para el
+problema, para que sean las ``relevantes'' o  ``dominantes''.  La sigiuente
+parte del curso se tratará de las maneras de resolver este problema.
 
 
 
