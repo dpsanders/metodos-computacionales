@@ -8,13 +8,17 @@
 \usepackage{hyperref}
 
 \usepackage{mathptmx}
-\usepackage{helvet}
+% \usepackage{helvet}
 
 \usepackage{pdfsync}
 
 \usepackage{manfnt}
 
 \graphicspath{../notas}
+
+\usepackage{amsmath}
+
+
 
 % \renewcommand{\familydefault}{\sfdefault}
 
@@ -88,10 +92,15 @@
 
 \renewcommand{\chaptername}{Capítulo}
 
+\newcommand{\defn}[1]{\emph{#1}}
+\newcommand{\HH}{\mathcal{H}}
+
 \begin{document}
 \newcommand{\captionfonts}{\small}
 
-\newcommand{\defn}[1]{\emph{#1}}
+
+
+
 
 
 \makeatletter  % Allow the use of @ in command names
@@ -136,6 +145,14 @@ Notas del curso del Posgrado en Ciencias Físicas
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\xx}{\vec{x}}
 
+\newcommand{\s}{\sigma}
+
+\renewcommand{\ss}{\mathbf{\sigma}}
+\newcommand{\defeq}{:=}
+\newcommand{\mean}[1]{\left \langle #1 \right \rangle}
+
+\newcommand{\dd}[2]{\frac{\partial #1}{\partial #2}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagebreak
@@ -156,10 +173,16 @@ Notas del curso del Posgrado en Ciencias Físicas
 % \include{11-05may2008/c++_plantillas}
 
 \include{introduccion}
+
+\part{Caminatas aleatorias y la sintaxis básica de C++}
 \include{sintaxis-basica}
 \include{aleatorios-funciones-caminatas}
 \include{contenedores-vectores}
 \include{archivos-argumentos-plantillas}
+
+
+\part{Métodos de Monte Carlo con cadenas de Markov}
+\include{modelo-ising}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Bibliography
