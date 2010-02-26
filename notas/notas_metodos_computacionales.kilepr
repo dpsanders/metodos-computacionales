@@ -3,8 +3,8 @@ def_graphic_ext=eps
 img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
-kileversion=2.1
-lastDocument=contenedores-vectores.tex
+kileversion=2.1 beta2
+lastDocument=muestreo.tex
 masterDocument=
 name=notas_metodos_computacionales
 pkg_extIsRegExp=false
@@ -27,10 +27,10 @@ order=1
 
 [item:contenedores-vectores.tex]
 archive=true
-column=9
+column=43
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=12
 open=true
 order=4
 
@@ -52,12 +52,21 @@ line=3
 open=false
 order=-1
 
-[item:notas.tex]
+[item:muestreo.tex]
 archive=true
-column=22
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=167
+line=61
+open=true
+order=5
+
+[item:notas.tex]
+archive=true
+column=24
+encoding=UTF-8
+highlight=LaTeX
+line=168
 open=true
 order=0
 

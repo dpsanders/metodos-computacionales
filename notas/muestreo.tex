@@ -44,7 +44,8 @@ E(\mu^{(i)})}.
 Por lo tanto, las configuraciones aparecen en la suma pesada por la
 distribución $p(\mu)$ de muestreo que nosotros imponemos.
 
-Para eliminar este efecto no-deseado, es necesario dividir por las $p$:
+Para eliminar este efecto no-deseado, es necesario dividir por las $p$. Así
+obtenemos las siguientes expresiones aproximadas para las cantidades de interés:
 \begin{equation}
  Z \simeq  \sum_{i=1}^M \frac{1}{p(\mu_i)} e^{-\beta
 E(\mu_i)};
@@ -54,5 +55,49 @@ E(\mu_i)};
 E(\mu_i)}}{\sum_{j=1}^M \textfrac{1}{p(\mu_j)} e^{-\beta
 E(\mu_j)}}.
 \end{equation}
+Estos estimados convergen a los valores verdaderos cuando el número de datos $M$
+converge al infinito.
+ 
+\section{Muestreo de Boltzmann}
+>Cuál distribución $p(\mu)$ nos dará los mejores resultados? Una posibilidad es la de intentar reproducir el sistema físico de la manera más fiel posible: muestreamos según la distribución de Boltzmann, $p(\mu) = \textfrac{1}{Z} e^{-\beta E(\mu)}$. Al sustituir esta distribución en el estimado, encontramos que
+\begin{equation}
+ \mean{Q} \simeq \frac{1}{M} \sum_{i=1}^M Q(\mu_i).
+\end{equation}
+Es decir, el promedio, tomando en cuenta las frecuencias de visita, se reduce a un promedio simple de los datos.
+
+Sin embargo, esto nos lleva a otro problema: <no sabemos cómo generar distintas configuraciones según la distribución de Boltzmann!
+La solución, sugerida por primera vez por Metropolis et al.~en los años 1950s, es que podemos generar esta --o cualquier otra-- distribución usando un \defn{proceso estocástico} que \emph{converja} hacia esta distribución. En particular, emplearemos normalmente una \defn{cadena de Markov}.
+
+\section{Cadenas de Markov}
+La idea es que generaremos una secuencia de configuraciones $\ss_t$ en el tiempo $t$. En cada paso, partiendo de la configuración $\ss$ actual, el sistema podrá escoger distintas configuraciones $\tt$ en el siguiente paso de tiempo $t+1$. Esta elección no será determinista, sino aleatorio: distintas configuraciones $\tt$ se podrán elegir con distintas \defn{probabilidades de transición} $P(\ss \to \tt)$.  Eso se repite en cada paso de tiempo (discreto), así dando lugar a un proceso estocástico. Para que sea una cadena de Markov, se requiere además que las probabilidades $P(\ss \to \tt)$ dependen solamente del estado actual $\ss$. Una caminata aleatoria normal es un ejemplo.
+
+Denotemos por $w_\ss(t)$ la probabilidad de que el sistema se encuentre en el estado $\ss$ al tiempo $t$. Entonces tenemos que
+\begin{equation}
+ w_\tt(t+1) = \sum_{\ss} w_\ss(t) P(\ss \to \tt).
+\end{equation}
+Eso es, la probabilidad de estar en cierto estado en el siguiente paso de tiempo es igual a la suma de las probabilidades de que estaba en otra configuración en el paso anterior, por la probabilidad de que la nueva configuración se escogió.
+Aunque la suma es, en principio, sobre todas las configuraciones del sistema, en la práctica se reduce a una suma sobre solamente las configuraciones de donde se puede alcanzar la configuración nueva $\tt$. 
+
+Al examinar la forma del miembro de derecho en esta ecuación, nos percatamos de que tiene una forma parecida a una multiplicación de matrices. Por lo tanto, se puede reescribir como
+\begin{equation}
+ \ww(t+1) = \PP \cdot \ww(t).
+\end{equation}
+Nótese que tenemos que definir las componentes de la matriz $\PP$ como $P_{\tt \ss} \defeq P(\ss \to \tt)$ para que salga esta ecuación.
+
+Al iterar esta relación, tenemos que
+\begin{equation}
+ \ww(t) = \PP^t \cdot \ww(0).
+\end{equation}
+Por lo tanto, el comportamiento asintótico en el tiempo de las probabilidades $w_\mu(t)$ depende de los valores y vectores propios de la matriz $\PP$ de probabilidades de transición.  Por ejemplo, si el valor propio más grande fuera menor que $1$ en módulo, entonces todas las probabilidades se decaerían a $0$. Sin embargo, dado que $\sum_\mu w_\mu(t) = 1$ para todo $t$, esto no es posible.
+De hecho, esta condición de normalización implica que el valor propio de mayor módulo es $1$, y los demás valores propios son menores que $1$ en módulo.  Por lo tanto, la distribución converge a un límite $\ww(\infty)$ cuando $t \to \infty$, que satisface una invarianza bajo la acción de $\PP$:
+\begin{equation}
+w_\tt(\infty) = \sum_\ss w_\ss(\infty) P(\ss \to \tt)
+\end{equation}
+Es decir, esta distribución ya no cambia en el tiempo. Por lo tanto, la podemos considerar como una distribución de \defn{equilibrio}.
+De hecho, es justamente la distribución --única-- de equilibrio $p(\ss)$ que genera esta cadena de Markov.
+
+Distintas cadenas de Markov difieren en sus probabilidades de transición $P(\ss \to \tt)$. Al cambiar estas probabilidades de transición, se cambia en general la distribución de equilibrio que se genera. Para poder generar una distribución de equilibrio dada, es crucial, por lo tanto, averiguar cómo se relacionan la $\PP$ y la $p(\ss)$ que generar.
+
+
 
 
