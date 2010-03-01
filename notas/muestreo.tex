@@ -92,11 +92,48 @@ Por lo tanto, el comportamiento asintótico en el tiempo de las probabilidades $
 De hecho, esta condición de normalización implica que el valor propio de mayor módulo es $1$, y los demás valores propios son menores que $1$ en módulo.  Por lo tanto, la distribución converge a un límite $\ww(\infty)$ cuando $t \to \infty$, que satisface una invarianza bajo la acción de $\PP$:
 \begin{equation}
 w_\tt(\infty) = \sum_\ss w_\ss(\infty) P(\ss \to \tt)
+\label{eq:eqm-distn-w}
 \end{equation}
 Es decir, esta distribución ya no cambia en el tiempo. Por lo tanto, la podemos considerar como una distribución de \defn{equilibrio}.
 De hecho, es justamente la distribución --única-- de equilibrio $p(\ss)$ que genera esta cadena de Markov.
 
 Distintas cadenas de Markov difieren en sus probabilidades de transición $P(\ss \to \tt)$. Al cambiar estas probabilidades de transición, se cambia en general la distribución de equilibrio que se genera. Para poder generar una distribución de equilibrio dada, es crucial, por lo tanto, averiguar cómo se relacionan la $\PP$ y la $p(\ss)$ que generar.
+
+
+\section{Condiciones de balance detallado y ergodicidad}
+
+Reescribiendo la ecuación \eqref{eq:eqm-distn-w} en términos de la distribución de equilibrio $p(\ss)$, obtenemos
+\begin{equation}
+ p(\tau) = \sum_\ss p(\ss) P(\ss \to \tau).
+\end{equation}
+Pero también podemos escribir el miembro de izquierda como
+\begin{equation}
+  p(\tau) = p(\tau) \sum_\ss P(\tau \to \ss) = \sum_\ss p(\tau) P(\tau \to \ss),
+\end{equation}
+donde la primera igualdad utiliza la normalización que la suma vale $1$ (``hay que ir a algún lado'').
+Finalmente, llegamos a la \defn{condición de balance} 
+\begin{equation}
+ \sum_\ss p(\tau) P(\tau \to \ss) = \sum_\ss p(\ss) P(\ss \to \tau).
+\end{equation}
+
+La condición de balance es una condición \emph{necesaria} para que la distribución $p(\ss)$ sea una distribución invariante.
+Una manera posible de satisfacer esta ecuación es igualando de manera individual los términos de los dos lados. De ahí resulta una condición
+\emph{suficiente}, pero no necesaria, llamada la \defn{condición de balance detallado}:
+\begin{equation}
+p(\ss) P(\ss \to \tau) =  p(\tau) P(\tau \to \ss),
+\end{equation}
+que se tiene para \emph{todas} las configuraciones $\ss$ y $\tt$.
+Podemos pensar que esta ecuación especifica que los flujos de probabilidad en equilibrio de una configuación a otra es igual al flujo de regreso.
+
+En el caso del muestreo de Boltzmann, la distribución de equilibrio que nos interesa es justamente la de Boltzmann:
+
+\subsubsection{Ergodicidad}
+Otra condición importante que tiene que satisfacer el proceso es la de \defn{ergodicidad}. Eso requiere que cualquier configuración está accesible
+desde cualquier otra, a través un número finito de pasos. Si no fuera el caso, entonces podría haber unas partes del espacio de configuraciones que nunca se
+pudiera alcanzar.
+
+
+
 
 
 
