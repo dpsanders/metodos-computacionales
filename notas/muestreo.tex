@@ -121,17 +121,32 @@ Una manera posible de satisfacer esta ecuación es igualando de manera individua
 \emph{suficiente}, pero no necesaria, llamada la \defn{condición de balance detallado}:
 \begin{equation}
 p(\ss) P(\ss \to \tau) =  p(\tau) P(\tau \to \ss),
+\label{eq:balance-detallado}
 \end{equation}
 que se tiene para \emph{todas} las configuraciones $\ss$ y $\tt$.
 Podemos pensar que esta ecuación especifica que los flujos de probabilidad en equilibrio de una configuación a otra es igual al flujo de regreso.
 
-En el caso del muestreo de Boltzmann, la distribución de equilibrio que nos interesa es justamente la de Boltzmann:
+Normalmente, queremos generar una distribución de equilibrio $p(\ss)$ dada. Así que la versión de la condición de balance detallado que nos interesa es:
+\begin{equation}
+\frac{P(\ss \to \tt)}{P(\tt \to \ss)} =  \frac{p(\tt)}{p(\ss)}.
+\label{eq:balance-detallado}
+\end{equation}
+En el caso del muestreo de Boltzmann, la distribución de equilibrio que nos interesa es justamente la de Boltzmann. Por lo tanto, obtenemos que
+\begin{equation}
+\frac{P(\ss \to \tt)}{P(\tt \to \ss)} =  \frac{p(\tt)}{p(\ss)} = \frac{\frac{1}{Z} e^{-\beta \HH(\tt)}}{\frac{1}{Z} e^{-\beta \HH(\ss)}} = e^{-\beta \Delta \HH},
+\label{eq:balance-detallado-boltz}
+\end{equation}
+donde hemos definido \( \Delta \HH \defeq \HH(\tt) - \HH(\ss) \), es decir, $\Delta \HH$ es la diferencia de energías entre la configuración nueva y la anterior.
+Ésta es la condición que se tiene que satisfacer, entonces, para generar la distribución de Boltzmann.
+
 
 \subsubsection{Ergodicidad}
 Otra condición importante que tiene que satisfacer el proceso es la de \defn{ergodicidad}. Eso requiere que cualquier configuración está accesible
 desde cualquier otra, a través un número finito de pasos. Si no fuera el caso, entonces podría haber unas partes del espacio de configuraciones que nunca se
 pudiera alcanzar.
 
+
+\section{Regla de Metropolis}
 
 
 
