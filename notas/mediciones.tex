@@ -1,0 +1,27 @@
+\chapter{Mediciones}
+
+Después de contar con un programa que simula el modelo de Ising, estamos listos para poder \emph{medir} las cantidades que nos interesan, es decir, promedios de observables $Q$.  Por ejemplo, nos interesa medir la magnetización promedio $\mean{M}$, que identificamos con la magnetización macroscópica del sistema.
+A diferencia del enfoque de la física estadística usual, sacaremos este promedio literalmente como un promedio --de datos que medimos en la simulación.
+
+\section{Equilibración}
+
+En el capítulo anterior, vimos que en el caso donde generamos las configuraciones según la distribución de Boltzmann, el promedio $\mean{M}$ se calcula como un promedio simple de distintos datos. Sin embargo, estos datos se tienen que tomar \emph{en equilibrio}, es decir cuando la distribución generada por la cadena de Markov ya se ha convergido a la de Boltzmann. Por lo tanto, es necesario esperar un \defn{tiempo de equilibración} antes de empezar a tomar datos.
+
+Para estimar el tiempo de equilibración, podemos dibujar una observable como función del tiempo, por ejemplo al magnetización instantánea $M(t) \defeq M(\sigma(t))$, donde $\sigma(t)$ es la configuración alcanzada al tiempo $t$. Esta cantidad llegará a equilibrarse, fluctuando alrededor de cierto valor, después de un tiempo.
+(Para evitar que encontremos un estado metaestable, podemos lanzar distintas corridas desde distintas condiciones iniciales.)  El tiempo de equilibración se puede estimar, entonces, desde la gráfica de $M(t)$ contra $t$.
+
+\section{Promedios en equilibrio}
+
+Después de que se ha equilibrado el sistema, empezamos a muestrear datos.  A cada rato, medimos la observable $Q(t)$ que nos interesa, por ejemplo la magnetización instantánea, y guardamos esta información. Al final --después de muestrear lo que consideramos como suficientes datos-- sacamos un promedio de estos datos, lo cual da un estimado de la $\mean{Q}$ deseada.
+
+Además, es necesario calcular un estimado del \emph{error} posible en la medición de $\mean{Q}$, es decir, el error que cometemos al calcular el promedio de población $Q$ mediante un muestreo. Esto se conoce como el error estándar del promedio, y resulta ser un factor $1/\sqrt{N}$ menor que la desviación estándar $\sqrt{\mean{Q^2} - \mean{Q}^2}$ que mide el tamaño de las fluctuaciones en $Q$ alrededor de su promedio.
+
+\section{Variación de cantidades macroscópicas}
+El procedimiento anterior da como resultado un dato para cada observable, en cada simulación con temperatura $T$ fija. Usualmente, nos interesa cómo varía el comportamiento del sistema cuando variamos los parámetros del mismo, por ejemplo la temperatura $T$ y el campo externo $h$. Por lo tanto, hay que repetir las mediciones con distintas simulaciones a distintas temperaturas $T$, para extraer una gráfica de $\mean{Q}(T)$ como función de $T$.
+
+\section{Funciones de respuesta}
+Aparte de los promedios de cantidades que corresponden a funciones termodinámicas macroscópicas, hay cantidades adicionales que nos interesan. Por ejemplo, las funciones de respuesta macroscópicas $\chi$ --la susceptibilidad magnética-- y $c$ --el calor específico-- también son importantes físicamente. Para extraerlas, podríamos derivar numéricamente los datos que ya tenemos. Sin embargo, eso no es una buena solución, ya que las derivadas numéricas suelen introducir mucho ruido. La alternativa adecuada es la de re-expresar estas funciones en términos de promedios de observables, las cuales podemos calcular directamente desde la simulación.
+
+% En general, el mensaje es que lo que podemos calcular en las simulaciones tipo Metropolis suelen ser promedios de observables.
+
+Hay otras funciones termodinámicas macroscópicas que ni siquiera se pueden expresar directamente como promedios, tales como la entropía $S$ y energía libre $F$. A diferencia de la física estadística usual, estas cantidades son las más difíciles de calcular en simulaciones tipo Metropolis.

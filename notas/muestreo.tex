@@ -129,7 +129,7 @@ Podemos pensar que esta ecuación especifica que los flujos de probabilidad en e
 Normalmente, queremos generar una distribución de equilibrio $p(\ss)$ dada. Así que la versión de la condición de balance detallado que nos interesa es:
 \begin{equation}
 \frac{P(\ss \to \tt)}{P(\tt \to \ss)} =  \frac{p(\tt)}{p(\ss)}.
-\label{eq:balance-detallado}
+\label{eq:balance-detallado-nuevo}
 \end{equation}
 En el caso del muestreo de Boltzmann, la distribución de equilibrio que nos interesa es justamente la de Boltzmann. Por lo tanto, obtenemos que
 \begin{equation}
@@ -137,7 +137,7 @@ En el caso del muestreo de Boltzmann, la distribución de equilibrio que nos int
 \label{eq:balance-detallado-boltz}
 \end{equation}
 donde hemos definido \( \Delta \HH \defeq \HH(\tt) - \HH(\ss) \), es decir, $\Delta \HH$ es la diferencia de energías entre la configuración nueva y la anterior.
-Ésta es la condición que se tiene que satisfacer, entonces, para generar la distribución de Boltzmann.
+Ésta es la condición que se tiene que satisfacer, entonces, para generar la distribución de Boltzmann.  Nótese que los factores de la función de partición $Z$ \emph{se cancelan} de la ecuación. Es por eso que podemos generar la distribución adecuada, sin tener que conocer el valor de $Z$; ésta es la fuerza y la clave del método.
 
 
 \subsubsection{Ergodicidad}
@@ -147,6 +147,57 @@ pudiera alcanzar.
 
 
 \section{Regla de Metropolis}
+Nos queda la tarea de resolver la ecuación~\eqref{eq:balance-detallado-boltz} para las probabilidades de transición $P(\ss \to \tt)$ para una distribución de equilbrio $p(\ss)$ dada. La manera que adoptaremos --que está lejos de ser única-- se debe a Metropolis et al., quien lo inventaron a principos de los 1950s.
+
+Metropolis et al.~se dieron cuenta de que podemos reducir la dificultad de resolver la ecuación~\eqref{eq:balance-detallado-boltz} al separar la probabilidad de transición $P(\ss \to \tt)$ en dos partes:
+\begin{equation}
+ P(\ss \to \tt) = g(\ss \to \tt) \, \alpha(\ss \to \tt),
+\end{equation}
+donde $g(\ss \to \tt)$ es una probabilidad de \emph{generar}, o \emph{proponer} el cambio hacia la nueva configuración $\tt$, y $\alpha(\ss \to \tt)$ es la probabilidad de que \defn{aceptemos} este cambio si se propone.  Si no aceptamos el cambio, es decir que lo \defn{rechazamos}, entonces el sistema se queda en la misma configuración $\ss$. Por lo tanto, hay en general una probabilidad no-cero de quedarse en el mismo estado, lo que implica que $P(\ss \to \ss) \neq 0$.
+
+La idea es que ahora nosotros imponemos las probabilidades $g(\ss \to \tt)$ de proponer cambios que queramos, por ejemplo los que sean fáciles de implementar.
+Luego hace falta resolver para las $\alpha(\ss \to \tt)$. Esto resulta ser más fácil si las $g(\ss \to \tt)$ se escogen de manera que sean \emph{simétricas}, ya que en este caso
+tenemos que
+\begin{equation}
+\frac{P(\ss \to \tt)}{P(\tt \to \ss)}  = \frac{g(\ss \to \tt) \alpha(\ss \to \tt)}{g(\tt \to \ss) \alpha(\tt \to \ss)}  = \frac{\alpha(\ss \to \tt)}{\alpha(\tt \to \ss)}.
+\end{equation}
+
+Como ejemplo, consideremos el caso del modelo de Ising. La manera más sencilla de generar nuevas configuraciones es que cambiemos solamente un espín a la vez.
+Así que las probabilidades de generación $g(\ss \to \tt)$ son $1/N$ si las configuraciones $\ss$ y $\tt$ difieren en solamente un espín, mientras que son $0$ si no. En este caso, la probabilidad de regresar a la configuración anterior es igual, y entonces $g(\ss \to \tt)$ sí es simétrica.
+
+\subsubsection{Solución de Metropolis et al.\ para probabilidades de aceptación}
+Finalmente, nos quedamos con la ecuación
+\begin{equation}
+  \frac{\alpha(\ss \to \tt)}{\alpha(\tt \to \ss)} = e^{-\beta \Delta \HH}
+\end{equation}
+en el caso de la ecuación de Boltzmann. (En otro caso, el miembro de derecha de la ecuación será distinto, pero el siguiente argumento también se aplica.)
+
+No queremos que las $\alpha(\ss \to \tt)$ sean pequeñas, ya que en este caso el sistema se quedará mucho tiempo en cada configuración, y así no explorará bien las configuraciones posibles. Por lo tanto, queremos \emph{maximizar} las $\alpha(\ss \to \tt)$.  Ya que son probabilidades, están acotadas entre $0$ y $1$. Por lo tanto, ponemos el más grande de $\alpha(\ss \to \tt)$ y $\alpha(\tt \to \ss)$ igual a $1$. Si $\Delta \HH > 0$, es decir que $\HH(\tt) > \HH(\ss)$, entonces $e^{-\beta \Delta \HH} < 1$, y entonces según la ecuación vemos que $\alpha(\ss \to \tt) < \alpha(\tt \to \ss)$. Así que ponemos $\alpha(\tt \to \ss) = 1$, lo que implica que $\alpha(\ss \to \tt) = e^{-\beta \Delta \HH}$.
+
+Finalmente, encontramos la \defn{regla de Metropolis}: el cambio de la configuración $\ss$ a la configuración nueva $\tau$ se acepta con probabilidad
+\begin{equation}
+ \alpha(\ss \to \tt) = \begin{cases}
+                        e^{-\beta \Delta \HH}, &\text{si } \Delta \HH > 0\\
+		      1, &\text{si no}
+                       \end{cases}
+= \min\{1, e^{-\beta \Delta \HH} \}.
+\end{equation}
+Nótese que el cambio siempre se acepta si la energía de la configuración nueva es menor o igual que la energía de la configuración anterior.
+Aunque eso sea sorprendente, resulta ser el método más eficiente, como acabamos de demostrar.
+
+\section{Algoritmo de Metropolis}
+Ya tenemos todos los ingredientes para simular el modelo de Ising --o, de hecho, cualquier modelo cuyo Hamiltoniano conocemos-- a una temperatura fija:
+\begin{enumerate}
+
+\item Empezar con una configuración inicial $\ss$.
+\item Proponer una nueva configuración $\tau$ de manera simétrica --en el modelo de Ising, cambiar un espín.
+\item Calcular el cambio de la energía total que resulta, $\Delta \HH \defeq \HH(\tt) - \HH(\ss)$.
+\item Si $\Delta \HH \le 0$, entonces aceptar el cambio --el sistema se queda en el nuevo estado $\tt$.\\
+  Si $\Delta \HH > 0$, entonces aceptar el cambio con la probabilidad $e^{-\beta \Delta \HH}$. Si no, entonces rechazar el cambio --el sistema se queda en el estado $\ss$.
+\item Repetir desde (2).
+\end{enumerate}
+
+Lo que hemos mostrado en este capítulo es que el algoritmo anterior genera con éxito, en el límite de tiempo largo, las configuraciones $\ss$ con frecuencias que convergen a la distribución de Boltzmann $p(\ss)$.
 
 
 
