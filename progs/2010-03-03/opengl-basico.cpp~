@@ -38,7 +38,7 @@ void display() {
 	desplazamiento += 0.001;
 	if (desplazamiento > 1)
 		desplazamiento = 0.0;
-// 	glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 int main(int argc, char** argv) {
