@@ -1,0 +1,295 @@
+\chapter{Programación orientada a objetos: clases}
+
+Hasta ahora, hemos tratado a C++ principalmente como una versión mejorada de C.
+Sin embargo, el punto principal de este lenguaje es que introduce la habilidad de crear nuevos tipos de \emph{objeto}, que viven al lado de los tipos ya definidos, como \inl{int} y \inl{double}. Estos objetos nos proporcionan la manera de modelar manera más fiel en la computadora el problema que nos interesa.
+
+\section{Los objetos}
+
+Igual que las variables usuales, todo objeto en C++ tiene un \defn{tipo}, lo cual se especifica a través de la declaración de una \defn{clase}.
+Igual que los objetos en el mundo real, los objetos pueden tener propiedades internas, o \defn{estados}, y maneras de \defn{interactuar} con el mundo, a través de funciones.
+
+\subsection{Ejemplo: partículas}
+
+Supongamos que estamos modelando una partícula en 2 dimensiones.
+Podríamos representar la partícula a través de ciertas variables:
+\begin{lstlisting}
+double x, y;    // position
+double vx, vy;  // velocity
+x += dt * vx;  // actualizamos su posicion
+y += dt * vy;
+\end{lstlisting}
+
+Si ahora queremos introducir otra partícula, podríamos poner
+\begin{lstlisting}
+double x1, y1;
+double x2, y2;
+double vx1, vy1;
+double vx2, vy2;
+\end{lstlisting}
+Si además tienen masas y colores, entonces tenemos
+\begin{lstlisting}
+double m1, m2;
+int c1, c2; 
+\end{lstlisting}
+Para muchas partículas introduciríamos mejor arreglos. 
+
+Ahora, >en dónde están las partículas? La respuesta tiene que ser ``en ningún lado'', o más bien, ``en todos lados''.
+El problema es que existen muchas variables que conceptualmente están relacionadas, pero no hemos logrado hacer la conección entre ellas en el programa.
+
+Pero tenemos muchas
+variables que conceptualmente están relacionadas, todas \textit{pertenecen}
+a una partícula, pero no hay manera de expresar esto en el lenguaje.
+(De hecho, en C hay 'struct'.  Lo que vamos a ver es un 'struct'
+  muchísimo ampliado.)
+
+\subsection{Clases}
+
+Para hacer esta conección, lo que queremos hacer es \emph{agrupar} a las variables de una partícula en un grupo, u \defn{objeto}, 
+llamado \inl{Particula}, y poder declarar variables de este tipo como \inl{Particula p}. (Nótese que es una convención que los objetos definidos por el usuario tengan nombres que empiezan con mayúsculas.)
+
+Para implementar un objeto de este tipo en C++, se declara una \defn{clase}:
+\begin{lstlisting}
+class Particula {
+  double x;
+  double y;
+
+  double vx;
+  double vy;  
+};   // no se olvide el ';' al final de la declaracion
+\end{lstlisting}
+Nótese que la clase se declara con llaves, y con un punto y coma al final.
+La declaración se coloca antes de la de \inl{main()} y de cualquier otra función.
+
+
+Esta declaración define un nuevo \emph{tipo} \inl{Particula}, que luego está disponible en el programa,
+pero todavía no hay ninguna partícula existente. Para crear una partícula de este tipo, creamos una
+\defn{instancia} de la clase, o sea, un objeto que tiene este tipo:
+\begin{lstlisting}
+Particula p1;
+Particula p2;
+\end{lstlisting}
+La sintaxis es igual que la de declarar una variable de cualquier tipo pre-definido.
+
+\subsection{Acceso a datos de un objeto}
+
+Podemos pensar en los objetos como cajas que contienen ciertos datos, que corresponden a sus estados internos.
+Ahora es necesario poder accesar la información que se encuentra adentro del objeto.  Para hacerlo utilizamos la siguiente sintaxis:
+\begin{lstlisting}
+p1.x = 3.0;
+p1.y = 2.0; 
+\end{lstlisting}
+La sintaxis \inl{p1.x} denota a la variable \inl{x} que vive adentro del objeto llamado \inl{p1}, de tipo \inl{Particula}.
+
+
+
+Pero hay un problema: por defecto, todo lo que hay adentro de una
+clase es \emph{privado} (\inl{private}) --eso es, estas variables sólo se pueden accesar o
+cambiar desde dentro de la clase. 
+Para cambiar el acceso a publico, ponemos \inl{public}
+antes de las partes que son públicas:
+\begin{lstlisting}
+class Particula {
+    double x;
+    double y;
+
+  public:
+    double vx;
+    double vy;
+};  
+\end{lstlisting}
+En este caso, las variables de posición siguen siendo privadas, mientras que las velocidades son públicas.
+
+>Para qué queremos que algunas variables sean privadas? Así, nosotros, como desarrolladores de la clase, podemos garantizar que no se pueden modificar estos datos desde afuera. Por ejemplo, al desarrollar una aplicación para un banco, no queremos que la cantidad de dinero disponible se pudiera modificar directamente.
+
+Nótese que \inl{p1.x} y \inl{p2.x} son dos variables \emph{distintas} que pertenecen a
+objetos distintos.  Cada instancia de una clase tiene su propia copia
+de todas las variables de la clase.
+
+\subsection{Funciones adentro de los objetos: métodos}
+Hasta ahora, las clases han actuado solamente como un tipo de contenedor de datos, lo cual sí es un uso común de los objetos en C++.
+Sin embargo, los objetos en el mundo no sólo tienen propiedades, sino también pueden ejecutar acciones y pueden interactuar con su entorno--es decir, pueden hacer cosas. Para modelar esto, las clases también pueden contener funciones, llamadas \defn{métodos}. Se declaran como funciones usuales, pero adentro de la clase. También pueden ser públicas o privadas:
+\begin{lstlisting}
+class Particula {
+  private:
+    double x, y;
+    double vx, vy;
+
+  public:
+    void mover(double dt) {
+      x += dt*vx;
+      y += dt*vy;
+    }
+};  
+\end{lstlisting}
+Aquí hemos definido una función \inl{mover()}. Al poner
+\begin{lstlisting}
+Particula p1, p2;
+p1.mover();
+\end{lstlisting}
+le decimos a la partícula llamada \inl{p1} que \emph{se mueva} --así, podemos interactuar con el objeto, e indirectamente cambiar sus estados. De igual forma, \inl{p2.mover()} le dice a \inl{p2} que ella se mueva.
+Todos los detalles de \emph{cómo} se
+mueven las partículas están \emph{escondidos} adentro del objeto.
+Incluso podemos cambiar por completo la estructura interna del objeto, sin tener que modificar el código afuera de la clase. Eso se llama \defn{encapsulación de datos}, ya que hemos logrado esconder los datos adentro de una ``cápsula'' hermética que no podemos modificar de manera directa, sino solamente a través de las funciones que se proveen para este propósito.
+
+Otro benificio de este enfoque es que podríamos tener otro objeto, por ejemplo \inl{Disco}, que tuviera también un método llamado \inl{mover}. Así que hemos evitado la necesidad de definir dos funciones con dos nombres distintos, \inl{moverParticula()} y \inl{moverDisco()}. De hecho, veremos más adelante que incluso puede ser útil tratar a un \inl{Disco} como un \emph{tipo $e$} \inl{Particula}, lo cual se logra con una técnica llamada \defn{herencia}.
+
+\section{Constructores}
+En nuestro ejemplo \inl{Particula}, no hay manera de inicializar la posición y la velocidad de la partícula, puesto que ya no tenemos acceso directo a las variables constituyentes del objeto. Podríamos declarar una función pública, por ejemplo \inl{inicializar()}, con este fin, que tomara argumentos representando la posición y velocidad iniciales del objeto. Sin embargo, no hay manera de obligar al usuario llamar a estas funciones.
+
+C++ provee una solución a este problema: la \defn{función constructora}, o \defn{constructor}. Es una función especial que se llama \emph{cada vez} que se crea una instancia de un objeto de un tipo dado. El constructor no tiene tipo de regreso, y debe portar exactamente el mismo nombre como la clase. Se declara adentro de la declaración de la clase, y se utiliza para inicializar todas las variables de una clase, para lo cual hay una sintaxis especial:
+\begin{lstlisting}
+class Particula {
+  private:
+    double x, y;
+    double vx, vy;
+
+  public:
+    Particula() : x(0.0), y(0.0), vx(0.0), vy(0.0) 
+    { }
+};  
+
+\end{lstlisting}
+Muy a menudo en las clases simples, la función parece no tener ningún contenido --el contenido está en la \defn{lista de inicialización}, que dice justamente cómo inicializar a las variables que pertenecen a la clase.
+
+
+Acordémonos que en C++, dos funciones distintas pueden llevar el mismo nombre, siempre
+y cuando tienen listas de parámetros distintas.  Así que podemos definir
+otro constructor que acepta como argumentos la posición y velocidad iniciales. También podemos especificar valores por defecto:
+\begin{lstlisting}
+Particula(double xx=0.0, double yy=0.0, double vxx=0.0, double vyy=0.0) 
+    : x(xx), y(yy), vx(vxx), vy(vyy) {
+}	
+\end{lstlisting}
+
+Los argumentos se pasan al momento de crear un objeto:
+\begin{lstlisting}
+Particula p1(3.0, 4.0);  // vx y vy son 0
+Particula p3(3.0, 4.0, 0.1, 0.1);
+\end{lstlisting}
+
+\section{Clases adentro de clases}
+Ya tenemos una representación de una partícula mucho más cercana al modelo matemático.
+Sin embargo, cuando pensamos en la posición, o velocidad, de una partícula, lo vemos como un vector.
+Este aspecto todavía no está representado.
+
+>Cómo podemos incorporar esta idea? Lo que requerimos es \emph{otra clase}, \inl{Vec}, que representa a un vector dos-dimensional:
+\begin{lstlisting}
+class Vec {
+  public:
+    double x, y;
+
+  Vec(double xx, double yy) : x(xx), y(yy) 
+  { }
+};
+\end{lstlisting}
+Por ahora, pensaremos en \inl{Vec} como sólo un contenedor de datos, por lo cual declaramos a sus variables como públicas\footnote{Eso también se puede hacer con la palabre clave \inl{struct} en lugar de \inl{class}. Un \inl{struct} es un objeto cuyas variables son públicas por defecto. Una versión más reducida de este concepto (sin los métodos) también existe en C.}.
+
+Ponemos la declaración de \inl{Vec} antes de la de \inl{Particula}, para poder utilizar los \inl{Vec} adentro de \inl{Particula}:
+\begin{lstlisting}
+class Particula {
+  Vec posicion;
+  Vec velocidad;
+
+  Particula(double xx=0.0, double yy=0.0, double vxx=0.0, double vyy=0.0) 
+    : posicion(xx, yy), velocidad(vxx, vyy) 
+  { }
+
+  void mover(double dt) {
+    posicion.x += dt * velocidad.x;
+    posicion.y += dt * velocidad.y;
+  }
+};
+\end{lstlisting}
+Ahora sí hemos logrado una representación muy fiel del concepto de partícula que tenemos.
+
+Falta un detalle: en la función \inl{mover}, nos gustaría poder utilizar la notación \emph{vectorial}
+\begin{lstlisting}
+posicion += dt * velocidad;
+\end{lstlisting}
+para corresponder completamente con la fórmula matemática vectorial que escribiríamos.
+Eso es posible, pero requiere un concepto más complicado: la \defn{sobrecarga de operadores}.
+
+
+
+% 
+% \subsection{Ejemplo}
+% 
+% (i) Escribir una clase sencilla para representar un vector de 2
+% números dobles.
+% 
+% Tiene un constructor que no acepta argumentos, que inicializa los
+% datos a 0, y otro que acepta los valores iniciales.
+% 
+% Además, tiene una función \texttt{print} que imprime el vector con
+% notación matemática: e.g. (x,y)
+% 
+% (ii) Reescribir la clase \texttt{Particula} para que la posición y la
+% velocidad sean \texttt{Vectores}.
+% 
+% La clase \texttt{Particula} también tiene una propia función
+% \texttt{print}, que imprime su posición y velocidad.
+% 
+% Además, tiene una función \texttt{euler} que actualiza su posición con un
+% paso del método de Euler con la velocidad actual.
+% 
+% \begin{Verbatim}[frame=single, label=particula.cpp]
+% #include<iostream>
+% using namespace std;
+% 
+% class Vector{
+% private:
+%   double x,y;
+% public:
+%   void print(){
+%     cout << "("<< x <<","<< y <<")"<< endl;
+%       }
+%   
+%   Vector(double xx=0.0, double yy=0.0):x(xx), y(yy){
+%   }
+% };
+% 
+% class Particula //nuevo tipo de objeto
+% {
+% private:
+%   Vector pos;
+%   Vector vel;  
+% 
+% public:        //todo es accesible 
+% 
+%   // Particula():pos(),vel(){
+%   //}//constructor que inicializa a 0
+%   Particula(double x=0, double y=0, double vx=0, double vy=0):
+%             pos(x,y),vel(vx,vy){
+%   }//constructor que acepta un valor
+%   //C++ diferencia entre objetos con mismo nombre
+%   void print (){
+%     cout << "Posicion: ";
+%     pos.print();
+% 
+%     cout << "Vel: ";
+%     vel.print();
+%   }
+% };
+% 
+% int main(){
+%   
+%   Particula p;
+%   Particula q(3, 4, -1,-1);  
+%   Particula q3(1, 2, -3);
+%   //si no se define una entrada regresa 0 ya que asi se inicializo    
+%   p.print();
+%   q.print();  
+%   q3.print();
+% }
+% 
+% \end{Verbatim}
+% 
+% \begin{Verbatim}[frame=single, framerule=0.5mm]
+% $ g++ particula.cpp -o particula
+% $ ./particula Posicion: (0,0)
+% Vel: (0,0)
+% Posicion: (3,4)
+% Vel: (-1,-1)
+% Posicion: (1,2)
+% Vel: (-3,0)
+% \end{Verbatim}
