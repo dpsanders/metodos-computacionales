@@ -44,170 +44,151 @@ La flecha tiene el significado de ``modificar la variable \inl{x} en el objeto a
 \section{Herencia}
 
 Hasta ahora, hemos utilizado los objetos (clases) como un concepto que modela una colección de información y métodos. 
-La idea de guardar distintos datos juntos adentro de un objeto se llama \defn{encapsulación}, y es el primer elemento clave de la programación orientada a objetos.
+Esta idea de guardar distintos datos juntos adentro de un objeto se llama \defn{encapsulación}, y es el primer elemento clave de la programación orientada a objetos.
 
-Otro elemento clave es el 
+Otro elemento clave de la programación orientada a objetos es la \defn{herencia}. La herencia es un mecanismo que nos permite relacionar distintos tipos de objeto en jerarquías que expresan el concepto \defn{tipo de} --eso es, la herencia es una técnica que nos permite declarar que un objeto es un \emph{tipo de} otro objeto. 
 
-Ahora entraremos en la programacion realmente orientada a objetos: lo que pasa depende del tipo de objeto que tenemos.
+Por ejemplo, >qué quiere decir que una manzana sea un \emph{tipo de} fruta, o que una laptop sea un \emph{tipo de} computadora? Quiere decir
+que todas las frutas tienen ciertas propiedades \emph{en común}, y que en particular una manzana comparte estas propiedades, además de otras posibles propiedades que tenga. De igual manera, en C++ la herencia nos permite decir que un objeto A es un tipo de otro objeto B, y por lo tanto el objeto A \defn{hereda} todas las propiedades del objeto B, que son las propiedades comunes a todos los \defn{subtipos} de B, como es el caso de A.
 
-Que pasa si tenemos dos librerias graficas, entre las cuales  queremos poder elegir, e.g. gnuplot y pgplot, con sintaxis distinta.
-
-Queremos escribir codigo que es *independiente* de que libreria usamos, e tambien independiente de cualquier libreria futura.
-
-Asi que queremos un *interfaz* unica, con distintos 'engines' atras.
-
-
-Los objetos 'gnuplot' y 'pgplot' deberian de ser *tipos de* 'objeto_grafico', un objeto que representa cualquier tipo de interfaz grafica.
-
-Ej.
----
-Que tipo de relacion tienen Particula y Vector?
-
-
-LA RELACION TIPO-DE
--------------------
-En C++ modelamos la relacion 'tipo de' usando *herencia*:
-creamos un tipo base que representa una clase de objetos muy amplia, en este caso cualquier interfaz grafica.
-
-Cualquier *subtipo* que es un *tipo de* el tipo base, se define como tal, y *hereda* todos los atributos y funciones del tipo base.
-Ademas puede tener atributos extras propios a el.
-
-Por ejemplo, en una simulacion, podriamos tener dos tipos distintos de particula, un cuadrado y un circulo.  No sabemos a priori cuantas de cada tipo hay, y podriamos querer dejar abierto la posibilidad de anadir otro tipo despues.
-
-
-Como implementamos esta prescripcion?
-Podriamos definir un tipo general de objeto:
-
-class Objeto {
-	public:
+\section{Ejemplo de herencia}
+Supongamos que queremos escribir un programa que dibuje distintos tipos de formas en la pantalla, por ejemplo puntos, rectángulos, discos, y triángulos.
+Cada una de estas formas tiene cierta información que es común a todas las formas, por ejemplo cada una tiene una posición y velocidad en dos dimensiones, un color, tal vez una masa, etc. Pero luego difieren en otra información, por ejemplo el radio del disco y los dos lados del rectángulo.
+Por lo tanto, podemos pensar que hay un tipo de objeto básico, llamado \inl{Forma}, que tiene las propiedades comunes, y cada forma es un \emph{subtipo} de \inl{Forma}. Eso se puede implementar como sigue. La clase base se llama \inl{Forma}:
+\begin{lstlisting}
+class Forma {
+  public:
 	Vector posicion;
 	Vector velocidad;
+	int color;
+	double masa;
 }
+\end{lstlisting}
+Las variables de la clase base son públicas para que sean accesibles desde las otras clases que las heredan.
+Ahora declaramos las otras formas para que \defn{hereden} la información común de \inl{Forma}:
+\begin{lstlisting}
+class Punto : public Forma {
+};
 
-Luego *heredamos* las otras clases de Objeto:
+class Rectangulo : public Forma {   
+  private:
+  double altura, anchura;
+};
 
-class Cuadrado : public Objeto {   // siempre publico por el momento
-	private:
-	double longitud;
-}
-
-class Disco : public Objeto {
-	private:
+class Disco : public Forma {
+  private:
 	radio;
+};
+\end{lstlisting}
+Nótese que \inl{Punto} no requiere ninguna información extra.
+
+Ahora queremos que además cada objeto se puede mover, por lo cual agregamos un método (una función) a la clase \inl{Forma}.
+Eso se puede hacer adentro de la declaración de la clase, o como sigue:
+\begin{lstlisting}
+Forma::mover(double dt) {
+  posicion += dt * velocidad;	
+  cout << "mover() de Forma" << endl;  
 }
+\end{lstlisting}
 
-
-Cada objeto se puede mover:
-
-Objeto::mover(double dt) {
-	posicion += dt * velocidad;
-}
-
+Ahora podemos mover a objetos de diferentes tipos:
+\begin{lstlisting}
+Punto p;
 Disco d;
-d.mover(0.1);   // funciona
 
-Aqui estamos llamando la version de mover de Objeto, que hereda Disco tambien.
+p.mover(0.1);
+d.mover(0.1);
+\end{lstlisting}
 
+\section{Polimorfismo}
+Ahora llegamos a la parte clave para la cual sirve la herencia: el \defn{polimorfismo}.
+Queremos que un solo objeto pueda ser de diferentes tipos. Por ejemplo, queremos poder escoger si crear un punto, un rectángulo o un disco,
+y luego moverlo --es decir, queremos un solo objeto que puede ser de cualquiera de estos tipos. Normalmente eso no se puede hacer en C++, ya que cada objeto puede ser de un solo tipo.
 
-PUNTEROS Y HERENCIA; new
-------------------------
+La solución es la de utilizar un puntero, que apuntu al tipo \emph{base} \inl{Forma}. Como los tipos \inl{Punto}, \inl{Rectangulo} etc.\ son subtipos de \inl{Forma}, un puntero a \inl{Forma} también puede apuntar a cualquiera de los subtipos, es decir los tipos \defn{derivados} de la clase base.
+Funciona como sigue:
+\begin{lstlisting}
+Forma* p;    // puntero a Forma
+Disco disco;
+Rectangulo rect;
 
-Punteros son cruciales para el *polimorfismo* -- es decir, la posibilidad que un objeto pueda ser de distintos tipos, en este caso un cuadrado o un disco.
-
-El punto es que un puntero a un objeto de la clase base tambien puede apuntarse a cualquier tipo derivado (subtipo) de la clase base.
-
-
-Objeto* p;
-Disco d;
-Cuadrado c;
-
-p = &d;
+p = &disco;
 p->mover();
 
-p = &c;
+p = &rect;
 p->mover();
+\end{lstlisting}
+Vemos que \inl{p} apunta en turno a dos objetos de dos tipos diferentes, pero subtipos de \inl{Forma}, y que podemos entonces llamar a la función 
+\inl{mover()} de cada objeto a través de un solo puntero \inl{p}. De cierta forma entonces, \inl{p} ``puede ser de diferentes tipos''.
 
-Se pueden crear nuevos objetos en el momento con el operador 'new', que crea un objeto y regresa su direccion en la memoria, que se asigna a un puntero:
-
-p = new Disco;
-Objeto* p2 = new Cuadrado;
+\section{Los operadores \inl{new} y \inl{delete}}
+Para evitar tener que crear objetos de cada tipo antes de utilizarlos, podemos hacer mano del operador \inl{new}. Este operador crea un objeto de cierto tipo, y regresa la dirección de la memoria reservada para contener este objeto, la cual se tiene que asignar a un puntero:
+\begin{lstlisting}
+Forma* p = new Disco;
+Forma* p2 = new Rectangulo;
 
 p->mover();
 p2->mover();
+\end{lstlisting}
+Cuando terminemos de utilizar el objeto correspondiente, es necesario liberar la memoria que ocupa, con el operador \inl{delete}:
+\begin{lstlisting}
+delete p;
+delete p2;
+\end{lstlisting}
 
-
-POLIMORFISMO
-------------
-Suponemos que el cuadrado y el disco se mueven de distintas maneras -- por ejemplo, el cuadrado puede rotarse, mientras que para el circulo no es necesario rotarlo, como es simetrico.
-
-Entonces queremos definir distintas versiones de mover para Cuadrado y para Circulo:
-
-Cuadrado::mover() {
-	cout << "Mover un cuad" << endl;
+\section{Polimorfismo logrado: funciones virtuales}
+Ahora supongamos que el rectángulo y el disco se mueven de \emph{distintas} maneras --por ejemplo, el rectángulo puede rotarse, mientras que para el disco no.
+Entonces queremos definir distintas versiones de \inl{mover()} para \inl{Rectangulo} y \inl{Disco}:
+\begin{lstlisting}
+Rectangulo::mover() {
+	cout << "Mover un rectangulo" << endl;
 }
 
-Circulo::mover() {
-	cout << "Mover un circ" << endl;
+Disco::mover() {
+	cout << "Mover un disco" << endl;
 }
+\end{lstlisting}
+Pero si intentamos mover los dos objetos usando un puntero, nos da una sorpresa
+\begin{lstlisting}
+Forma *p = new Rectangulo;
+p -> mover();
+delete p;
 
+Forma *p = new Disco;
+p -> mover();
+delete p;
+\end{lstlisting}
+Encontramos que la función que se llama es la \inl{mover()} original, aquella definida en \inl{Forma}.
+Sin embargo, no nos debería de sorprender tanto, ya que \inl{p} es justamente un puntero a \inl{Forma}.
 
-Ej.
----
-Intenta esto directamente con objetos c y d, y luego a traves del puntero a Objeto, p.
-
-
-FUNCIONES VIRTUALES
--------------------
-Se ve que no funciona como querriamos.
-Para hacerlo, basta anadir una palabra: 'virtual'.
-
-La version de mover() en Objeto se declara como 'virtual':
-
-virtual Objeto::mover() {
-	cout << "mover() de Objeto" << endl;
+Para lograr el comportamiento deseado, donde se llama a la versión adecuada de la función \inl{mover()} para cada subtipo, es necesario agregar una sola palabra: \inl{virtual}. Es decir, la función \inl{mover()} \emph{en la clase base} se declara como una función ``virtual'', como sigue:
+\begin{lstlisting}
+virtual Forma::mover() {
+	cout << "mover() de Forma" << endl;
 }
+\end{lstlisting}
 
-Y todo lo demas queda igual.
+Ahora si volvemos a llamar a \inl{mover()} de los subtipos, sí llama a la versión definida para cada uno de ellos.
+Es decir, \emph{en el momento de correr el programa}, se decide cuál versión de \inl{mover()} se tiene que llamar, dependiendo del tipo de \inl{p} \emph{en este momento}. 
 
-El 'virtual' indica que es una funcion que tiene otras versiones definidas para objetos de cada tipo.
-El programa decide [usando un mecanismo que involucra punteros] al momento de correrse, que version de mover() usar, dependiendo del tipo de objeto a lo cual apunta p *en este momento*.
-
-Ej.
----
-Prueba eso, con p apuntando primero a un Circulo y luego a un Cuadrado.
-
-Ej.
----
+\ejercicio
 Escribe un programa sencillo de dibujo.
-Acepta cualquier numero de objetos c y d (desde la terminal, uno por uno), y crea objetos que anade a una lista. Los dibuja con gnuplot.
-Toman posiciones aleatorias.
+Segun lo que teclee el usuario --'r' o 'd'-- crea cualquier número de objetos de tipo \inl{Rectangulo} y \inl{Disco}, hasta que el usuario teclee
+'t' (terminado). Dibuja los objetos con \texttt{gnuplot}.  Las posiciones de los objetos pueden ser aleatorios.
 
+\section{Clases base abstractas}
+Aún cuando una función en una clase base es una función \inl{virtual}, no es necesario proveer ninguna definición nueva de la función en una subclase. Si no se provee para un subtipo dado, entonces este subtipo utilizará la versión definida en la clase base.
 
-
-
-
-CLASES BASE ABSTRACTAS
-----------------------
-
-Cuando se usa la herencia, se puede *obligar* a las sub-clases a que provean una funcion virtual, definiendolo en la clase base (la raiz de la jerarquia) como
-
-class AbstractObject {
-	public:
-		virtual void mover() = 0;
+Sin embargo, a veces es útil \emph{obligar} a cada subclase proveer su propia función. 
+Esto se puede hacer al declarar la función virtual en la clase base como sigue:
+\begin{lstlisting}
+class FormaAbstracta {
+  public:
+	virtual void mover() = 0;
 };
-
-El '=0' hace que no tenga definicion mover en la clase base. Por eso es una clase *abstracta*, y no se pueden crear instancias de esta clase.
-
-Las subclases se implementan de la manera normal:
-
-class Cuadrado : public AbstractObject {
-	public:
-		void mover() {
-		 cout << "Mueve un cuadrado" << endl;	
-}
-}
-
-pero ahora si no se provee una version de mover() en alguna clase heredada, el compilador genera un error.
-
+\end{lstlisting}
+El \inl{= 0} es una manera de informarle al compilador que la función \inl{mover()} \emph{no está definida} en la clase base.
+Por lo tanto, \emph{no es posible crear ningún objeto de tipo \inl{Forma}}. Además, cualquier subtipo debe proporcionar su propia definición de \inl{mover()}. Solamente se pueden definir objetos de estos subtipos.
+Por lo tanto, la clase base es una clase base \defn{abstracta}.
 
 
