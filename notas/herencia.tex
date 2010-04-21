@@ -1,0 +1,213 @@
+\chapter{Herencia y polimorfismo}
+
+En este capítulo, llegaremos a discutir algunos de los conceptos y métodos centrales de la programación orientada a objetos: la herencia y el polimorfismo.
+
+\section{Punteros}
+
+Hasta ahora, hemos podido evitar utilizar (al menos de manera explícita) los punteros\footnote{A diferencia de C puro, donde los punteros juegan un papel básico para utilizar arreglos de tamaño variable, por ejemplo.}. Pero para los fines de este capítulo, sí es necesario emplearlos.
+
+Los punteros funcionan de manera parecida a las referencias. Son objetos que ``apuntan a'' un objeto en la memoria: un puntero es una variable que contiene literalmente la dirección del espacio reservado en la memoria donde se guarda el contenido de otra variable.
+Así que se puede examinar y modificar el valor de la variable de manera indirecta a través del puntero.
+
+Un puntero solamente puede apuntar a un objeto de un solo tipo, así que hay punteros a \inl{int}, a \inl{double}, etc.  Tambien se pueden declarar punteros que
+apuntan a un objeto de un tipo definido por el usuario, por ejemplo un puntero a objetos de tipo \inl{Particula}.
+
+Un puntero a \inl{int} se declara con la siguiente sintaxis:
+\begin{lstlisting}
+int a = 3;
+int* p;      // p se declara como un puntero a int
+p = &a;   // el valor de p es la direccion de a
+
+cout << "a = " << a << endl;
+*p = 17;   // cambiar a 17 el contenido del objeto a lo cual apunta p
+cout << "a = " << a << endl;
+cout << *p << endl;   // 
+\end{lstlisting}
+Nótese que el asterisco tiene dos significados: indica que se está declarando un puntero si se utiliza en una declaración, mientras en cualquier otro contexto quiere decir ``el valor del objeto al cual apunta el puntero''. El ampersand (\inl{&}) se utiliza para asignarle la dirección de una variable a un puntero, para que el puntero apunte a dicha variable.
+
+Si existe una clase \inl{Vec} (es decir, ya se ha declarado), entonces se puede declarar un puntero a \inl{Vec} de igual manera con
+\begin{lstlisting}
+Vec v;
+Vec* pp;
+pp = &v;
+\end{lstlisting}
+En este caso, si \inl{Vec} contiene una variable llamada \inl{x}, entonces se puede accesar con
+\begin{lstlisting}
+(*pp).x = 3.0;
+\end{lstlisting}
+Dado que esta sintaxis es complicada y fea, existe una alternativa equivalente más sugestiva:
+\begin{lstlisting}
+pp -> x = 3.0;
+\end{lstlisting}
+La flecha tiene el significado de ``modificar la variable \inl{x} en el objeto a lo cual apunto \inl{pp}''.
+
+\section{Herencia}
+
+Hasta ahora, hemos utilizado los objetos (clases) como un concepto que modela una colección de información y métodos. 
+La idea de guardar distintos datos juntos adentro de un objeto se llama \defn{encapsulación}, y es el primer elemento clave de la programación orientada a objetos.
+
+Otro elemento clave es el 
+
+Ahora entraremos en la programacion realmente orientada a objetos: lo que pasa depende del tipo de objeto que tenemos.
+
+Que pasa si tenemos dos librerias graficas, entre las cuales  queremos poder elegir, e.g. gnuplot y pgplot, con sintaxis distinta.
+
+Queremos escribir codigo que es *independiente* de que libreria usamos, e tambien independiente de cualquier libreria futura.
+
+Asi que queremos un *interfaz* unica, con distintos 'engines' atras.
+
+
+Los objetos 'gnuplot' y 'pgplot' deberian de ser *tipos de* 'objeto_grafico', un objeto que representa cualquier tipo de interfaz grafica.
+
+Ej.
+---
+Que tipo de relacion tienen Particula y Vector?
+
+
+LA RELACION TIPO-DE
+-------------------
+En C++ modelamos la relacion 'tipo de' usando *herencia*:
+creamos un tipo base que representa una clase de objetos muy amplia, en este caso cualquier interfaz grafica.
+
+Cualquier *subtipo* que es un *tipo de* el tipo base, se define como tal, y *hereda* todos los atributos y funciones del tipo base.
+Ademas puede tener atributos extras propios a el.
+
+Por ejemplo, en una simulacion, podriamos tener dos tipos distintos de particula, un cuadrado y un circulo.  No sabemos a priori cuantas de cada tipo hay, y podriamos querer dejar abierto la posibilidad de anadir otro tipo despues.
+
+
+Como implementamos esta prescripcion?
+Podriamos definir un tipo general de objeto:
+
+class Objeto {
+	public:
+	Vector posicion;
+	Vector velocidad;
+}
+
+Luego *heredamos* las otras clases de Objeto:
+
+class Cuadrado : public Objeto {   // siempre publico por el momento
+	private:
+	double longitud;
+}
+
+class Disco : public Objeto {
+	private:
+	radio;
+}
+
+
+Cada objeto se puede mover:
+
+Objeto::mover(double dt) {
+	posicion += dt * velocidad;
+}
+
+Disco d;
+d.mover(0.1);   // funciona
+
+Aqui estamos llamando la version de mover de Objeto, que hereda Disco tambien.
+
+
+PUNTEROS Y HERENCIA; new
+------------------------
+
+Punteros son cruciales para el *polimorfismo* -- es decir, la posibilidad que un objeto pueda ser de distintos tipos, en este caso un cuadrado o un disco.
+
+El punto es que un puntero a un objeto de la clase base tambien puede apuntarse a cualquier tipo derivado (subtipo) de la clase base.
+
+
+Objeto* p;
+Disco d;
+Cuadrado c;
+
+p = &d;
+p->mover();
+
+p = &c;
+p->mover();
+
+Se pueden crear nuevos objetos en el momento con el operador 'new', que crea un objeto y regresa su direccion en la memoria, que se asigna a un puntero:
+
+p = new Disco;
+Objeto* p2 = new Cuadrado;
+
+p->mover();
+p2->mover();
+
+
+POLIMORFISMO
+------------
+Suponemos que el cuadrado y el disco se mueven de distintas maneras -- por ejemplo, el cuadrado puede rotarse, mientras que para el circulo no es necesario rotarlo, como es simetrico.
+
+Entonces queremos definir distintas versiones de mover para Cuadrado y para Circulo:
+
+Cuadrado::mover() {
+	cout << "Mover un cuad" << endl;
+}
+
+Circulo::mover() {
+	cout << "Mover un circ" << endl;
+}
+
+
+Ej.
+---
+Intenta esto directamente con objetos c y d, y luego a traves del puntero a Objeto, p.
+
+
+FUNCIONES VIRTUALES
+-------------------
+Se ve que no funciona como querriamos.
+Para hacerlo, basta anadir una palabra: 'virtual'.
+
+La version de mover() en Objeto se declara como 'virtual':
+
+virtual Objeto::mover() {
+	cout << "mover() de Objeto" << endl;
+}
+
+Y todo lo demas queda igual.
+
+El 'virtual' indica que es una funcion que tiene otras versiones definidas para objetos de cada tipo.
+El programa decide [usando un mecanismo que involucra punteros] al momento de correrse, que version de mover() usar, dependiendo del tipo de objeto a lo cual apunta p *en este momento*.
+
+Ej.
+---
+Prueba eso, con p apuntando primero a un Circulo y luego a un Cuadrado.
+
+Ej.
+---
+Escribe un programa sencillo de dibujo.
+Acepta cualquier numero de objetos c y d (desde la terminal, uno por uno), y crea objetos que anade a una lista. Los dibuja con gnuplot.
+Toman posiciones aleatorias.
+
+
+
+
+
+CLASES BASE ABSTRACTAS
+----------------------
+
+Cuando se usa la herencia, se puede *obligar* a las sub-clases a que provean una funcion virtual, definiendolo en la clase base (la raiz de la jerarquia) como
+
+class AbstractObject {
+	public:
+		virtual void mover() = 0;
+};
+
+El '=0' hace que no tenga definicion mover en la clase base. Por eso es una clase *abstracta*, y no se pueden crear instancias de esta clase.
+
+Las subclases se implementan de la manera normal:
+
+class Cuadrado : public AbstractObject {
+	public:
+		void mover() {
+		 cout << "Mueve un cuadrado" << endl;	
+}
+}
+
+pero ahora si no se provee una version de mover() en alguna clase heredada, el compilador genera un error.
+
+
+
