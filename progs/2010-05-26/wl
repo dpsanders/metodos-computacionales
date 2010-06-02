@@ -1,0 +1,6 @@
+#!/usr/bin/python	
+import sys
+
+E_min, E_max = map(int, sys.argv[1:3])
+
+print "Corriendo WL entre ", E_min, " y ", E_max
